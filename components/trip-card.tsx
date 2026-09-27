@@ -85,7 +85,7 @@ export function TripCard({
       >
         <div className="relative aspect-[4/3] w-full overflow-hidden sm:aspect-[16/10]">
           <Image
-            src={image || "/placeholder.svg"}
+            src={image || "/images/logo/icon-192.png"}
             alt={name}
             fill
             className="object-cover"
