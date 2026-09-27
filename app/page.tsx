@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { Header } from "@/components/header"
 import { HeroSection } from "@/components/hero-section"
 import { StatsSection } from "@/components/stats-section"
@@ -12,6 +13,20 @@ import { CTASection } from "@/components/cta-section"
 import { Footer } from "@/components/footer"
 import { WhatsAppFloat } from "@/components/whatsapp-float"
 import { SiteReadyGate } from "@/components/site-ready-gate"
+import { siteConfig } from "@/lib/site"
+
+export const metadata: Metadata = {
+  title: {
+    absolute: `${siteConfig.name} — International trips from the UAE`,
+  },
+  description: siteConfig.description,
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: `${siteConfig.name} — International trips from the UAE`,
+    description: siteConfig.description,
+    url: siteConfig.url,
+  },
+}
 
 export default function Home() {
   return (
