@@ -1,12 +1,16 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import Image from "next/image"
 import { AnimatePresence, motion } from "framer-motion"
 import { ArrowUpRight } from "lucide-react"
+import { Skeleton } from "@/components/ui/skeleton"
+import { cn } from "@/lib/utils"
 
 const WHATSAPP_URL = "https://wa.me/971529612199"
 const IMG_V = "v2"
+const FEATURED_MS = 3000
+const COUNTRY_MS = 14000
 
 type Destination = {
   id: string
@@ -96,11 +100,51 @@ const destinations: Destination[] = [
   },
 ]
 
-const ROTATE_MS = 6000
+const src = (path: string) => `${path}?${IMG_V}`
+
+function DestinationImage({
+  path,
+  alt,
+  className,
+  sizes,
+  priority,
+  loaded,
+  onLoaded,
+}: {
+  path: string
+  alt: string
+  className?: string
+  sizes: string
+  priority?: boolean
+  loaded: boolean
+  onLoaded: (path: string) => void
+}) {
+  return (
+    <>
+      {!loaded && <Skeleton className="absolute inset-0 z-[1] h-full w-full rounded-none" />}
+      <Image
+        src={src(path)}
+        alt={alt}
+        fill
+        sizes={sizes}
+        priority={priority}
+        className={cn(
+          "object-cover transition-opacity duration-300",
+          loaded ? "opacity-100" : "opacity-0",
+          className,
+        )}
+        onLoad={() => onLoaded(path)}
+        onError={() => onLoaded(path)}
+      />
+    </>
+  )
+}
 
 export function DestinationsSection() {
   const [activeId, setActiveId] = useState(destinations[0].id)
   const [paused, setPaused] = useState(false)
+  const [galleryPaused, setGalleryPaused] = useState(false)
+  const [loadedPaths, setLoadedPaths] = useState<Set<string>>(() => new Set())
   const active = destinations.find((d) => d.id === activeId) ?? destinations[0]
   const [featured, setFeatured] = useState(active.images[0])
 
@@ -108,22 +152,70 @@ export function DestinationsSection() {
     setFeatured(active.images[0])
   }, [active.id, active.images])
 
+  const markLoaded = useCallback((path: string) => {
+    setLoadedPaths((prev) => {
+      if (prev.has(path)) return prev
+      const next = new Set(prev)
+      next.add(path)
+      return next
+    })
+  }, [])
+
+  const isLoaded = useCallback((path: string) => loadedPaths.has(path), [loadedPaths])
+
+  const supporting = useMemo(
+    () => active.images.filter((path) => path !== featured),
+    [active.images, featured],
+  )
+  const mosaic = useMemo(() => supporting.slice(0, 4), [supporting])
+  const filmstrip = useMemo(() => supporting.slice(4), [supporting])
+
+  const featuredReady = loadedPaths.has(featured)
+  const destinationSeedReady = active.images.slice(0, 4).every((path) => loadedPaths.has(path))
+
+  // Cycle the main photo every few seconds
   useEffect(() => {
-    if (paused) return
-    const id = window.setInterval(() => {
+    if (paused || galleryPaused || !featuredReady) return
+    const id = window.setTimeout(() => {
+      setFeatured((current) => {
+        const imgs = active.images
+        const index = imgs.indexOf(current)
+        const next = imgs[(index + 1 + imgs.length) % imgs.length]
+        return next
+      })
+    }, FEATURED_MS)
+    return () => window.clearTimeout(id)
+  }, [paused, galleryPaused, featuredReady, featured, active.images])
+
+  // Country tabs advance more slowly so photos can cycle
+  useEffect(() => {
+    if (paused || !destinationSeedReady) return
+    const id = window.setTimeout(() => {
       setActiveId((current) => {
         const index = destinations.findIndex((d) => d.id === current)
-        const next = (index + 1) % destinations.length
-        return destinations[next].id
+        return destinations[(index + 1) % destinations.length].id
       })
-    }, ROTATE_MS)
-    return () => window.clearInterval(id)
-  }, [paused])
+    }, COUNTRY_MS)
+    return () => window.clearTimeout(id)
+  }, [paused, destinationSeedReady, activeId])
 
-  const src = (path: string) => `${path}?${IMG_V}`
-  const supporting = active.images.filter((path) => path !== featured)
-  const mosaic = supporting.slice(0, 4)
-  const filmstrip = supporting.slice(4)
+  const resumeTimerRef = useRef<number | null>(null)
+
+  const selectFeatured = (path: string) => {
+    setFeatured(path)
+    setGalleryPaused(true)
+    if (resumeTimerRef.current) window.clearTimeout(resumeTimerRef.current)
+    resumeTimerRef.current = window.setTimeout(() => {
+      setGalleryPaused(false)
+      resumeTimerRef.current = null
+    }, FEATURED_MS * 2)
+  }
+
+  useEffect(() => {
+    return () => {
+      if (resumeTimerRef.current) window.clearTimeout(resumeTimerRef.current)
+    }
+  }, [])
 
   return (
     <section id="destinations" className="relative overflow-hidden py-24 md:py-32">
@@ -218,8 +310,12 @@ export function DestinationsSection() {
             </div>
 
             {/* Editorial mosaic — desktop */}
-            <div className="mb-4 hidden h-[560px] gap-3 md:grid md:grid-cols-12 md:grid-rows-2">
-              <div className="relative col-span-5 row-span-2 overflow-hidden">
+            <div
+              className="mb-4 hidden h-[560px] gap-3 md:grid md:grid-cols-12 md:grid-rows-2"
+              onMouseEnter={() => setGalleryPaused(true)}
+              onMouseLeave={() => setGalleryPaused(false)}
+            >
+              <div className="relative col-span-5 row-span-2 overflow-hidden bg-zinc-100">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={featured}
@@ -229,13 +325,13 @@ export function DestinationsSection() {
                     transition={{ duration: 0.25 }}
                     className="absolute inset-0"
                   >
-                    <Image
-                      src={src(featured)}
+                    <DestinationImage
+                      path={featured}
                       alt={`${active.name} trip`}
-                      fill
-                      className="object-cover"
                       sizes="40vw"
                       priority
+                      loaded={isLoaded(featured)}
+                      onLoaded={markLoaded}
                     />
                   </motion.div>
                 </AnimatePresence>
@@ -243,15 +339,16 @@ export function DestinationsSection() {
               {mosaic[0] && (
                 <button
                   type="button"
-                  onClick={() => setFeatured(mosaic[0])}
-                  className="group relative col-span-7 overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
+                  onClick={() => selectFeatured(mosaic[0])}
+                  className="group relative col-span-7 overflow-hidden bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
                 >
-                  <Image
-                    src={src(mosaic[0])}
+                  <DestinationImage
+                    path={mosaic[0]}
                     alt={`${active.name} landscape`}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                     sizes="50vw"
+                    className="transition-transform duration-700 group-hover:scale-[1.03]"
+                    loaded={isLoaded(mosaic[0])}
+                    onLoaded={markLoaded}
                   />
                 </button>
               )}
@@ -260,15 +357,16 @@ export function DestinationsSection() {
                   <button
                     key={path}
                     type="button"
-                    onClick={() => setFeatured(path)}
-                    className="group relative min-h-0 overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
+                    onClick={() => selectFeatured(path)}
+                    className="group relative min-h-0 overflow-hidden bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground"
                   >
-                    <Image
-                      src={src(path)}
+                    <DestinationImage
+                      path={path}
                       alt={`${active.name} moment ${i + 2}`}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                       sizes="20vw"
+                      className="transition-transform duration-700 group-hover:scale-[1.03]"
+                      loaded={isLoaded(path)}
+                      onLoaded={markLoaded}
                     />
                   </button>
                 ))}
@@ -276,8 +374,12 @@ export function DestinationsSection() {
             </div>
 
             {/* Mobile: cover + snap filmstrip */}
-            <div className="md:hidden">
-              <div className="relative mb-3 aspect-[3/4] w-full overflow-hidden">
+            <div
+              className="md:hidden"
+              onTouchStart={() => setGalleryPaused(true)}
+              onTouchEnd={() => setGalleryPaused(false)}
+            >
+              <div className="relative mb-3 aspect-[3/4] w-full overflow-hidden bg-zinc-100">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={featured}
@@ -287,13 +389,13 @@ export function DestinationsSection() {
                     transition={{ duration: 0.2 }}
                     className="absolute inset-0"
                   >
-                    <Image
-                      src={src(featured)}
+                    <DestinationImage
+                      path={featured}
                       alt={`${active.name} trip`}
-                      fill
-                      className="object-cover"
                       sizes="100vw"
                       priority
+                      loaded={isLoaded(featured)}
+                      onLoaded={markLoaded}
                     />
                   </motion.div>
                 </AnimatePresence>
@@ -305,18 +407,19 @@ export function DestinationsSection() {
                     <button
                       key={path}
                       type="button"
-                      onClick={() => setFeatured(path)}
+                      onClick={() => selectFeatured(path)}
                       aria-pressed={isSelected}
-                      className={`relative h-48 w-[38vw] shrink-0 snap-start overflow-hidden ring-offset-2 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground ${
-                        isSelected ? "ring-2 ring-foreground opacity-100" : "opacity-80"
-                      }`}
+                      className={cn(
+                        "relative h-48 w-[38vw] shrink-0 snap-start overflow-hidden bg-zinc-100 ring-offset-2 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground",
+                        isSelected ? "ring-2 ring-foreground opacity-100" : "opacity-80",
+                      )}
                     >
-                      <Image
-                        src={src(path)}
+                      <DestinationImage
+                        path={path}
                         alt={`${active.name} ${i + 1}`}
-                        fill
-                        className="object-cover"
                         sizes="40vw"
+                        loaded={isLoaded(path)}
+                        onLoaded={markLoaded}
                       />
                     </button>
                   )
@@ -331,15 +434,16 @@ export function DestinationsSection() {
                   <button
                     key={path}
                     type="button"
-                    onClick={() => setFeatured(path)}
-                    className="group relative h-36 w-28 shrink-0 overflow-hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground sm:h-40 sm:w-32"
+                    onClick={() => selectFeatured(path)}
+                    className="group relative h-36 w-28 shrink-0 overflow-hidden bg-zinc-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-foreground sm:h-40 sm:w-32"
                   >
-                    <Image
-                      src={src(path)}
+                    <DestinationImage
+                      path={path}
                       alt={`${active.name} gallery ${i + 6}`}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
                       sizes="128px"
+                      className="transition-transform duration-500 group-hover:scale-105"
+                      loaded={isLoaded(path)}
+                      onLoaded={markLoaded}
                     />
                   </button>
                 ))}

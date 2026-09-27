@@ -10,22 +10,27 @@ import { TestimonialsSection } from "@/components/testimonials-section"
 import { FAQSection } from "@/components/faq-section"
 import { CTASection } from "@/components/cta-section"
 import { Footer } from "@/components/footer"
+import { WhatsAppFloat } from "@/components/whatsapp-float"
+import { SiteReadyGate } from "@/components/site-ready-gate"
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-background">
-      <Header />
-      <HeroSection />
-      <StatsSection />
-      <DestinationsSection />
-      <ManifestoSection />
-      <ServicesSection />
-      <FeaturesSection />
-      <CTASection />
-      <PricingSection />
-      <TestimonialsSection />
-      <FAQSection />
-      <Footer />
-    </main>
+    <SiteReadyGate>
+      <main className="min-h-screen bg-background">
+        <Header />
+        <HeroSection />
+        <DestinationsSection />
+        <PricingSection />
+        <ManifestoSection />
+        <StatsSection />
+        <ServicesSection />
+        <CTASection />
+        <TestimonialsSection />
+        <FeaturesSection />
+        <FAQSection />
+        <Footer />
+        <WhatsAppFloat />
+      </main>
+    </SiteReadyGate>
   )
 }
