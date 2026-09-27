@@ -10,11 +10,6 @@ const trips = [
     note: "Discover with Jazora",
   },
   {
-    src: "/gallery/web/IMG_7033.jpg",
-    place: "Snow day",
-    note: "White coats, pine forest, full crew",
-  },
-  {
     src: "/gallery/web/IMG_2431.jpg",
     place: "Tashkent",
     note: "Under the plane trees",
@@ -25,24 +20,29 @@ const trips = [
     note: "The whole crew showed up",
   },
   {
-    src: "/gallery/web/IMG_7230.jpg",
-    place: "Mountain light",
-    note: "Black fits against the peaks",
-  },
-  {
     src: "/gallery/web/IMG_0519.jpg",
     place: "Alpine winter",
     note: "Snow on the road home",
   },
   {
-    src: "/gallery/web/IMG_7411.jpg",
-    place: "Hotel steps",
-    note: "Dressed for the evening out",
+    src: "/gallery/web/IMG_0549.jpg",
+    place: "Autumn park",
+    note: "Hands up for the group shot",
   },
   {
-    src: "/gallery/web/IMG_7207.jpg",
-    place: "Night ride",
-    note: "On the train between cities",
+    src: "/gallery/web/IMG_0550.jpg",
+    place: "City light",
+    note: "Sunglasses required",
+  },
+  {
+    src: "/gallery/web/IMG_0551.jpg",
+    place: "Lobby meet",
+    note: "Ready for the next stop",
+  },
+  {
+    src: "/gallery/web/IMG_0552.jpg",
+    place: "The Elements",
+    note: "Four hearts, one trip",
   },
 ]
 
