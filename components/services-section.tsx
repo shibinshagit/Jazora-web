@@ -111,7 +111,7 @@ export function ServicesSection() {
           <div className="absolute inset-0 w-full h-full">
             <img
               src="/images/7aecbceb-cbd3-4cbd-901c-dd0125d41525.png"
-              alt="Coastal landscape on an Atlas departure"
+              alt="Coastal landscape on an Jazora departure"
               className={`w-full h-full object-cover transition-transform duration-1000 ease-out ${
                 isVisible ? "scale-100" : "scale-110"
               }`}
@@ -129,7 +129,7 @@ export function ServicesSection() {
               </h2>
               <div className="space-y-6 text-white/90 leading-relaxed">
                 <p>
-                  Atlas plans and leads international trips. A departure is a route, a team, and a schedule we run —
+                  Jazora plans and leads international trips. A departure is a route, a team, and a schedule we run —
                   from the first flight to the transfer home.
                 </p>
                 <p>

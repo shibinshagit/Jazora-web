@@ -1,9 +1,7 @@
 "use client"
 
 import { Check } from "lucide-react"
-import { useState, useEffect, useRef } from "react"
 import { motion } from "framer-motion"
-import { RealtimePropertyCard } from "./realtime-property-card"
 
 const features = [
   "Flights and hotels arranged",
@@ -14,63 +12,7 @@ const features = [
   "Travel cover options",
 ]
 
-const allTransactions = [
-  { name: "Japan in Spring", amount: "+$4,680", category: "Group departure", color: "from-emerald-400 to-teal-500" },
-  { name: "Sahara Crossing", amount: "+$3,240", category: "Group departure", color: "from-blue-400 to-indigo-500" },
-  { name: "Patagonia Trek", amount: "+$5,420", category: "Private journey", color: "from-amber-400 to-orange-500" },
-  { name: "Amalfi Coast", amount: "+$3,890", category: "Private journey", color: "from-rose-400 to-pink-500" },
-  { name: "Kyoto & the Alps", amount: "+$4,150", category: "Group departure", color: "from-violet-400 to-purple-500" },
-  { name: "Iceland Ring Road", amount: "+$3,760", category: "Group departure", color: "from-cyan-400 to-blue-500" },
-  { name: "Tuscan Harvest", amount: "+$4,120", category: "Private journey", color: "from-lime-400 to-green-500" },
-  { name: "Swiss Lakes", amount: "+$3,540", category: "Scenic rail", color: "from-fuchsia-400 to-pink-500" },
-]
-
 export function FeaturesSection() {
-  const [balance, setBalance] = useState(12458.32)
-  const [monthlyGrowth] = useState(23.5)
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const animationRef = useRef<number>()
-  const scrollPosition = useRef(0)
-  const lastUpdateTime = useRef(0)
-
-  const tripleTransactions = [...allTransactions, ...allTransactions, ...allTransactions]
-
-  useEffect(() => {
-    const animate = (timestamp: number) => {
-      if (!scrollRef.current) {
-        animationRef.current = requestAnimationFrame(animate)
-        return
-      }
-
-      if (!lastUpdateTime.current) lastUpdateTime.current = timestamp
-      const deltaTime = timestamp - lastUpdateTime.current
-      lastUpdateTime.current = timestamp
-
-      scrollPosition.current += (deltaTime / 1000) * 35
-
-      const singleSetHeight = scrollRef.current.scrollHeight / 3
-
-      if (scrollPosition.current >= singleSetHeight) {
-        scrollPosition.current = 0
-
-        const randomTransaction = allTransactions[Math.floor(Math.random() * allTransactions.length)]
-        const amount = Number.parseFloat(randomTransaction.amount.replace(/[$,]/g, ""))
-        setBalance((prev) => prev + amount)
-      }
-
-      scrollRef.current.style.transform = `translateY(-${scrollPosition.current}px)`
-      animationRef.current = requestAnimationFrame(animate)
-    }
-
-    animationRef.current = requestAnimationFrame(animate)
-
-    return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current)
-      }
-    }
-  }, [])
-
   return (
     <section id="features" className="py-32 px-6 relative overflow-hidden">
       <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-center pointer-events-none z-0">
@@ -79,46 +21,38 @@ export function FeaturesSection() {
         </span>
       </div>
 
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <div className="order-2 lg:order-1">
-            <RealtimePropertyCard />
-          </div>
+      <div className="max-w-3xl mx-auto relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
+        >
+          <h2 className="text-4xl md:text-5xl font-normal mb-6 text-balance font-serif">
+            A trip desk that stays with you
+          </h2>
+          <p className="text-muted-foreground leading-relaxed text-lg max-w-2xl mx-auto">
+            Reach the team that is already in the country with you — from the first flight to the transfer home.
+          </p>
+        </motion.div>
 
-          <div className="order-1 lg:order-2 space-y-8">
+        <div className="grid sm:grid-cols-2 gap-4">
+          {features.map((feature, index) => (
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+              key={index}
+              initial={{ opacity: 0, x: -10 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.4, delay: index * 0.1 }}
               viewport={{ once: true }}
+              className="flex items-center gap-2 rounded-xl p-3 py-1 transition-colors duration-300 hover:bg-zinc-50"
             >
-              <h2 className="text-4xl md:text-5xl font-normal mb-6 text-balance font-serif">
-                A trip desk that stays with you
-              </h2>
-              <p className="text-muted-foreground leading-relaxed text-lg">
-                Follow departures in real time, see who is en route, and reach the team that is already in the country
-                with you.
-              </p>
+              <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 shadow-md">
+                <Check className="h-3.5 w-3.5 text-white" strokeWidth={2.5} />
+              </div>
+              <span className="text-sm text-foreground">{feature}</span>
             </motion.div>
-
-            <div className="grid sm:grid-cols-2 gap-4">
-              {features.map((feature, index) => (
-                <motion.div
-                  key={index}
-                  initial={{ opacity: 0, x: -10 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
-                  viewport={{ once: true }}
-                  className="flex items-center p-3 rounded-xl hover:bg-zinc-50 transition-colors duration-300 gap-2 py-1"
-                >
-                  <div className="w-6 h-6 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
-                    <Check className="w-3.5 h-3.5 text-white" strokeWidth={2.5} />
-                  </div>
-                  <span className="text-sm text-foreground">{feature}</span>
-                </motion.div>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>

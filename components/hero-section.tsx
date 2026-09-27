@@ -1,6 +1,7 @@
 "use client"
 import { useEffect, useState } from "react"
 import { AnimatedText } from "./animated-text"
+import { PhoneTripGallery } from "./phone-trip-gallery"
 
 export function HeroSection() {
   const [isVisible, setIsVisible] = useState(false)
@@ -78,7 +79,7 @@ export function HeroSection() {
           className="block text-white font-bold text-[28vw] sm:text-[25vw] md:text-[22vw] lg:text-[20vw] tracking-tighter select-none text-center leading-none"
           style={{ marginBottom: "0" }}
         >
-          ATLAS
+          Jazora
         </span>
       </div>
 
@@ -88,7 +89,7 @@ export function HeroSection() {
             className={`transition-all duration-1000 delay-[800ms] ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-4"}`}
           >
             <h1 className="font-serif text-[3.5rem] sm:text-[4.5rem] md:text-[5.5rem] lg:text-[6.5rem] xl:text-[7.5rem] 2xl:text-[8.5rem] font-normal leading-tight mb-6 w-full px-4 max-w-6xl mx-auto text-balance">
-              <AnimatedText text="See the world, we'll run the trip" delay={0.3} />
+              <AnimatedText text="See the world, with Jazora" delay={0.3} />
             </h1>
           </div>
         </div>
@@ -110,11 +111,7 @@ export function HeroSection() {
                   borderRadius: "14.4% / 6.7%",
                 }}
               >
-                <img
-                  src="/images/jaz.jpeg"
-                  alt="Jaseera Abdul Jaleel’s Instagram profile on a phone"
-                  className="h-full w-full object-cover object-top"
-                />
+                <PhoneTripGallery />
               </div>
               <img
                 src="/images/iphone-frame-cutout.png"

@@ -1,140 +1,179 @@
 "use client"
 
-import { useRef, useEffect, useState } from "react"
-import { PropertyBookingCard } from "./property-booking-card"
+import { useEffect, useRef, useState } from "react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import { TripCard } from "./trip-card"
 
-const properties = [
+const trips = [
   {
-    propertyName: "Amalfi Coast",
+    name: "Amalfi Coast",
     location: "Positano, Italy",
     duration: "8 days",
-    availableDate: "May–October",
+    season: "May–October",
     image: "/images/property-beach-villa.jpg",
-    pricePerNight: 3890,
-    propertyType: "Coastal journey",
-    features: ["Cliff towns", "Boat day", "Local cooking", "Small group"],
-    amenities: ["Flights", "Guide", "Hotels"],
+    price: 14290,
+    type: "Coastal journey",
+    highlights: ["Cliff towns", "Boat day", "Local cooking"],
+    includes: ["Flights", "Guide", "Hotels"],
     rating: 4.9,
   },
   {
-    propertyName: "Patagonia Trek",
+    name: "Patagonia Trek",
     location: "El Chaltén, Argentina",
     duration: "11 days",
-    availableDate: "March & November",
+    season: "March & November",
     image: "/images/property-mountain-cabin.jpg",
-    pricePerNight: 5420,
-    propertyType: "Wilderness expedition",
-    features: ["Glacier hike", "Estancia stay", "Expert guides", "Small group"],
-    amenities: ["Meals", "Transfers", "Guide"],
+    price: 19900,
+    type: "Wilderness expedition",
+    highlights: ["Glacier hike", "Estancia stay", "Expert guides"],
+    includes: ["Meals", "Transfers", "Guide"],
     rating: 4.8,
   },
   {
-    propertyName: "Japan in Spring",
+    name: "Japan in Spring",
     location: "Tokyo to Kyoto",
     duration: "12 days",
-    availableDate: "March–April",
+    season: "March–April",
     image: "/images/property-city-loft.jpg",
-    pricePerNight: 4680,
-    propertyType: "Small-group departure",
-    features: ["Temples", "Bullet train", "Ryokan nights", "Cherry blossom"],
-    amenities: ["Flights", "Rail", "Guide"],
+    price: 17180,
+    type: "Small-group departure",
+    highlights: ["Temples", "Bullet train", "Ryokan nights"],
+    includes: ["Flights", "Rail", "Guide"],
     rating: 4.9,
   },
   {
-    propertyName: "Tuscan Harvest",
+    name: "Tuscan Harvest",
     location: "Florence, Italy",
     duration: "7 days",
-    availableDate: "September–October",
+    season: "September–October",
     image: "/images/property-tuscan-estate.jpg",
-    pricePerNight: 4120,
-    propertyType: "Private journey",
-    features: ["Vineyards", "Cooking class", "Hill towns", "Private driver"],
-    amenities: ["Hotels", "Driver", "Meals"],
+    price: 15120,
+    type: "Private journey",
+    highlights: ["Vineyards", "Cooking class", "Hill towns"],
+    includes: ["Hotels", "Driver", "Meals"],
     rating: 4.9,
   },
   {
-    propertyName: "Bali & Beyond",
+    name: "Bali & Beyond",
     location: "Ubud, Indonesia",
     duration: "9 days",
-    availableDate: "Year-round",
+    season: "Year-round",
     image: "/images/property-tropical-bungalow.jpg",
-    pricePerNight: 2760,
-    propertyType: "Island retreat",
-    features: ["Rice terraces", "Temples", "Sunrise trek", "Small group"],
-    amenities: ["Hotels", "Guide", "Transfers"],
+    price: 10130,
+    type: "Island retreat",
+    highlights: ["Rice terraces", "Temples", "Sunrise trek"],
+    includes: ["Hotels", "Guide", "Transfers"],
     rating: 4.8,
   },
   {
-    propertyName: "Swiss Lakes",
+    name: "Swiss Lakes",
     location: "Lucerne, Switzerland",
     duration: "6 days",
-    availableDate: "June–September",
+    season: "June–September",
     image: "/images/property-lakefront-modern.jpg",
-    pricePerNight: 3540,
-    propertyType: "Scenic rail",
-    features: ["Lake cruise", "Mountain railway", "Alpine villages", "Small group"],
-    amenities: ["Rail pass", "Hotels", "Guide"],
+    price: 12990,
+    type: "Scenic rail",
+    highlights: ["Lake cruise", "Mountain railway", "Alpine villages"],
+    includes: ["Rail pass", "Hotels", "Guide"],
     rating: 4.9,
   },
 ]
 
 export function PricingSection() {
-  const scrollRef = useRef<HTMLDivElement>(null)
-  const [isHovered, setIsHovered] = useState(false)
-  const positionRef = useRef(0)
-  const animationRef = useRef<number>()
+  const scrollerRef = useRef<HTMLDivElement>(null)
+  const [canPrev, setCanPrev] = useState(false)
+  const [canNext, setCanNext] = useState(true)
 
-  const duplicatedProperties = [...properties, ...properties, ...properties]
+  const updateArrows = () => {
+    const el = scrollerRef.current
+    if (!el) return
+    const max = el.scrollWidth - el.clientWidth
+    setCanPrev(el.scrollLeft > 8)
+    setCanNext(el.scrollLeft < max - 8)
+  }
 
   useEffect(() => {
-    const scrollContainer = scrollRef.current
-    if (!scrollContainer) return
-
-    const speed = isHovered ? 0.3 : 1 // Slow down on hover instead of changing animation duration
-    let lastTime = performance.now()
-
-    const animate = (currentTime: number) => {
-      const deltaTime = currentTime - lastTime
-      lastTime = currentTime
-
-      positionRef.current += speed * (deltaTime / 16)
-
-      const totalWidth = scrollContainer.scrollWidth / 3
-
-      if (positionRef.current >= totalWidth) {
-        positionRef.current = 0
-      }
-
-      scrollContainer.style.transform = `translateX(-${positionRef.current}px)`
-      animationRef.current = requestAnimationFrame(animate)
-    }
-
-    animationRef.current = requestAnimationFrame(animate)
-
+    const el = scrollerRef.current
+    if (!el) return
+    updateArrows()
+    el.addEventListener("scroll", updateArrows, { passive: true })
+    window.addEventListener("resize", updateArrows)
     return () => {
-      if (animationRef.current) {
-        cancelAnimationFrame(animationRef.current)
-      }
+      el.removeEventListener("scroll", updateArrows)
+      window.removeEventListener("resize", updateArrows)
     }
-  }, [isHovered])
+  }, [])
+
+  const scrollByCard = (dir: -1 | 1) => {
+    const el = scrollerRef.current
+    if (!el) return
+    const card = el.querySelector<HTMLElement>("[data-trip-card]")
+    const amount = card ? card.offsetWidth + 16 : el.clientWidth * 0.85
+    el.scrollBy({ left: dir * amount, behavior: "smooth" })
+  }
 
   return (
-    <section id="pricing" className="py-32 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 text-center mb-20">
-        <h2 className="text-4xl md:text-5xl font-normal mb-6 text-balance font-serif">Upcoming departures</h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-          International trips we design and lead. Prices are per person and include the route, stays, and local team.
-        </p>
+    <section id="pricing" className="relative overflow-hidden py-20 sm:py-28 md:py-32">
+      <div className="pointer-events-none absolute inset-0 flex items-center justify-center select-none">
+        <span className="whitespace-nowrap text-center text-[22vw] font-bold leading-none tracking-tighter text-zinc-100 sm:text-[18vw] md:text-[14vw]">
+          TRIPS
+        </span>
       </div>
 
-      <div className="relative w-full" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)}>
-        <div ref={scrollRef} className="flex gap-6" style={{ width: "fit-content" }}>
-          {duplicatedProperties.map((property, index) => (
-            <div key={index} className="flex-shrink-0 w-[85vw] sm:w-[60vw] lg:w-[400px]">
-              <PropertyBookingCard {...property} onBook={() => console.log(`Booking ${property.propertyName}`)} />
+      <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-6">
+        <div className="mb-10 flex flex-col gap-6 sm:mb-14 md:mb-16 md:flex-row md:items-end md:justify-between">
+          <div className="max-w-xl text-left md:max-w-2xl">
+            <h2 className="mb-3 font-serif text-3xl font-normal text-balance sm:mb-4 sm:text-4xl md:text-5xl">
+              Upcoming departures
+            </h2>
+            <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
+              International trips we design and lead. Prices are per person and include the route, stays, and local
+              team.
+            </p>
+          </div>
+
+          <div className="hidden items-center gap-2 md:flex">
+            <button
+              type="button"
+              aria-label="Previous trips"
+              disabled={!canPrev}
+              onClick={() => scrollByCard(-1)}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-border transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-30"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              aria-label="Next trips"
+              disabled={!canNext}
+              onClick={() => scrollByCard(1)}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-border transition-colors hover:bg-zinc-50 disabled:cursor-not-allowed disabled:opacity-30"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="relative z-10">
+        <div
+          ref={scrollerRef}
+          className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-5 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-4 sm:px-6 md:gap-5 [&::-webkit-scrollbar]:hidden"
+        >
+          {trips.map((trip) => (
+            <div
+              key={trip.name}
+              data-trip-card
+              className="w-[min(86vw,340px)] shrink-0 snap-center sm:w-[min(70vw,380px)] sm:snap-start lg:w-[400px]"
+            >
+              <TripCard {...trip} currency="AED" />
             </div>
           ))}
+          {/* end spacer so last card can snap with breathing room */}
+          <div className="w-1 shrink-0 sm:w-2" aria-hidden />
         </div>
+
+        <p className="mt-5 text-center text-xs text-muted-foreground md:hidden">Swipe to see more departures</p>
       </div>
     </section>
   )

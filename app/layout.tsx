@@ -9,9 +9,9 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] })
 const _playfair = Playfair_Display({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Atlas — International trips, planned and led",
+  title: "Jazora Holidays — The Aura of Discovering The World",
   description:
-    "Atlas designs and operates international trips. Small-group departures and private journeys, with flights, stays, guides, and on-the-ground support.",
+    "Jazora Holidays designs and operates international trips. Small-group departures and private journeys, with flights, stays, guides, and on-the-ground support.",
 }
 
 export default function RootLayout({

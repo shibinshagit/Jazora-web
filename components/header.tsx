@@ -2,7 +2,10 @@
 
 import type React from "react"
 import { useState } from "react"
-import { Menu, X, ArrowUpRight, ArrowRight, Compass } from "lucide-react"
+import Image from "next/image"
+import { Menu, X, ArrowUpRight, ArrowRight } from "lucide-react"
+
+const WHATSAPP_URL = "https://wa.me/971529612199"
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
@@ -43,16 +46,23 @@ export function Header() {
         }`}
       >
         <div className="flex items-center justify-between">
-          <a href="#" onClick={handleLogoClick} className="flex items-center gap-2 cursor-pointer">
-            <Compass
-              className={`w-6 h-6 transition-colors duration-300 ${isScrolled ? "text-black" : "text-foreground"}`}
-              strokeWidth={2}
+          <a href="#" onClick={handleLogoClick} className="flex items-center cursor-pointer">
+            <Image
+              src="/images/logo/logomain.png"
+              alt="Jazora Holidays"
+              width={176}
+              height={44}
+              className="hidden h-9 w-auto sm:block md:h-10"
+              priority
             />
-            <span
-              className={`text-lg font-medium tracking-tight transition-colors duration-300 ${isScrolled ? "text-black" : "text-foreground"}`}
-            >
-              Atlas
-            </span>
+            <Image
+              src="/images/logo/logoicon.png"
+              alt="Jazora Holidays"
+              width={40}
+              height={40}
+              className="h-9 w-9 sm:hidden"
+              priority
+            />
           </a>
 
           <nav className="hidden md:flex items-center gap-8">
@@ -66,13 +76,13 @@ export function Header() {
               How we travel
             </a>
             <a
-              href="#features"
-              onClick={(e) => handleSmoothScroll(e, "features")}
+              href="#destinations"
+              onClick={(e) => handleSmoothScroll(e, "destinations")}
               className={`text-sm transition-colors cursor-pointer ${
                 isScrolled ? "text-zinc-600 hover:text-black" : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              On the road
+              Routes
             </a>
             <a
               href="#pricing"
@@ -104,7 +114,10 @@ export function Header() {
           </nav>
 
           <div className="hidden md:flex items-center gap-1">
-            <button
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
               className={`relative flex items-center gap-0 border rounded-full pl-5 pr-1 py-1 transition-all duration-300 group overflow-hidden ${
                 isScrolled ? "border-zinc-300" : "border-border"
               }`}
@@ -133,7 +146,7 @@ export function Header() {
                   }`}
                 />
               </span>
-            </button>
+            </a>
           </div>
 
           <button
@@ -160,13 +173,13 @@ export function Header() {
               How we travel
             </a>
             <a
-              href="#features"
-              onClick={(e) => handleSmoothScroll(e, "features")}
+              href="#destinations"
+              onClick={(e) => handleSmoothScroll(e, "destinations")}
               className={`transition-colors cursor-pointer ${
                 isScrolled ? "text-zinc-600 hover:text-black" : "text-muted-foreground hover:text-foreground"
               }`}
             >
-              On the road
+              Routes
             </a>
             <a
               href="#pricing"
@@ -201,7 +214,11 @@ export function Header() {
               <a href="#" className={isScrolled ? "text-black" : "text-foreground"}>
                 Sign in
               </a>
-              <button
+              <a
+                href={WHATSAPP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setIsOpen(false)}
                 className={`relative flex items-center gap-0 border rounded-full pl-5 pr-1 py-1 w-fit transition-all duration-300 group overflow-hidden ${
                   isScrolled ? "border-zinc-300" : "border-border"
                 }`}
@@ -230,7 +247,7 @@ export function Header() {
                     }`}
                   />
                 </span>
-              </button>
+              </a>
             </div>
           </nav>
         )}

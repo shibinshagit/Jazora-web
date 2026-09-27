@@ -1,5 +1,6 @@
-import { ArrowUpRight, ArrowRight } from "lucide-react"
-import { AnimatedRevenueChart } from "./animated-revenue-chart"
+import { ArrowUpRight } from "lucide-react"
+
+const WHATSAPP_URL = "https://wa.me/971529612199"
 
 export function CTASection() {
   return (
@@ -11,51 +12,26 @@ export function CTASection() {
       </div>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        <div className="text-center mb-16">
+        <div className="text-center">
           <h2 className="text-4xl md:text-5xl font-normal leading-tight max-w-4xl mx-auto mb-6 font-serif">
             Ready for the next departure?
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto mb-10">
-            Tell us where you want to go. Atlas builds the route and runs the trip with you.
+            Tell us where you want to go. Jazora builds the route and runs the trip with you.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="relative flex items-center justify-center gap-0 bg-foreground text-background rounded-full pl-6 pr-1.5 py-1.5 transition-all duration-300 group overflow-hidden">
+          <div className="flex justify-center">
+            <a
+              href={WHATSAPP_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="relative flex items-center justify-center gap-0 bg-foreground text-background rounded-full pl-6 pr-1.5 py-1.5 transition-all duration-300 group overflow-hidden"
+            >
               <span className="text-sm pr-4">Plan a trip</span>
               <span className="w-10 h-10 bg-background rounded-full flex items-center justify-center">
                 <ArrowUpRight className="w-4 h-4 text-foreground" />
               </span>
-            </button>
-
-            <button className="relative flex items-center justify-center gap-0 border border-border rounded-full pl-6 pr-1.5 py-1.5 transition-all duration-300 group overflow-hidden">
-              <span className="absolute inset-0 bg-foreground rounded-full scale-x-0 origin-right group-hover:scale-x-100 transition-transform duration-300" />
-              <span className="text-sm text-foreground group-hover:text-background pr-4 relative z-10 transition-colors duration-300">
-                Browse departures
-              </span>
-              <span className="w-10 h-10 rounded-full flex items-center justify-center relative z-10">
-                <ArrowRight className="w-4 h-4 text-foreground group-hover:opacity-0 absolute transition-opacity duration-300" />
-                <ArrowUpRight className="w-4 h-4 text-foreground group-hover:text-background opacity-0 group-hover:opacity-100 transition-all duration-300" />
-              </span>
-            </button>
-          </div>
-        </div>
-
-        <div className="flex justify-center mb-16">
-          <AnimatedRevenueChart />
-        </div>
-
-        <div className="flex flex-col md:flex-row items-center justify-center gap-16">
-          <div className="text-center">
-            <p className="text-7xl font-light text-foreground">48</p>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">Countries</p>
-          </div>
-          <div className="text-center">
-            <p className="text-7xl font-light text-foreground">12K+</p>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">Travelers a year</p>
-          </div>
-          <div className="text-center">
-            <p className="text-7xl font-light text-foreground">98%</p>
-            <p className="text-xs text-muted-foreground uppercase tracking-wider">Would travel again</p>
+            </a>
           </div>
         </div>
       </div>

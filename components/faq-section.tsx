@@ -2,7 +2,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 
 const faqs = [
   {
-    question: "What does Atlas actually run on a trip?",
+    question: "What does Jazora actually run on a trip?",
     answer:
       "We design the route and operate it. That covers international flights, hotels or ryokan, ground transport, local guides, and a trip desk you can reach while you are abroad. Meals are included where the itinerary says so.",
   },
@@ -24,7 +24,7 @@ const faqs = [
   {
     question: "Is there support once we have left?",
     answer:
-      "Yes. A local lead travels with the group or meets you on arrival, and the Atlas desk is staffed around the clock for delays, medical issues, and itinerary changes.",
+      "Yes. A local lead travels with the group or meets you on arrival, and the Jazora desk is staffed around the clock for delays, medical issues, and itinerary changes.",
   },
   {
     question: "What if I need to cancel?",
@@ -40,7 +40,7 @@ export function FAQSection() {
         <div className="text-center mb-16">
           <h2 className="text-4xl md:text-5xl font-normal mb-6 text-balance font-serif">Frequently asked questions</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            How an Atlas departure works, from the first call to the flight home. Ask the trip desk if yours is not here.
+            How an Jazora departure works, from the first call to the flight home. Ask the trip desk if yours is not here.
           </p>
         </div>
 
