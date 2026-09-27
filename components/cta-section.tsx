@@ -1,6 +1,6 @@
 import { ArrowUpRight } from "lucide-react"
 
-const WHATSAPP_URL = "https://wa.me/971529612199"
+const WHATSAPP_URL = "https://wa.me/971588409478"
 
 export function CTASection() {
   return (

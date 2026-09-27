@@ -5,7 +5,7 @@ import { useState } from "react"
 import Image from "next/image"
 import { Menu, X, ArrowUpRight, ArrowRight } from "lucide-react"
 
-const WHATSAPP_URL = "https://wa.me/971529612199"
+const WHATSAPP_URL = "https://wa.me/971588409478"
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)

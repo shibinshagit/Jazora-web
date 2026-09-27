@@ -10,8 +10,7 @@ import {
   type MotionValue,
 } from "framer-motion"
 
-const INSTAGRAM_URL =
-  "https://www.instagram.com/mintsulaimani?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw=="
+const INSTAGRAM_URL = "https://www.instagram.com/jazoraholidays?stkn=ZTVqdmpkNTF2bzU4"
 
 type Milestone =
   | { id: string; kind: "intro"; eyebrow: string; title: string; line: string }

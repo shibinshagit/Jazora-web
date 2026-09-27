@@ -2,9 +2,8 @@ import Link from "next/link"
 import { Linkedin, Instagram, Facebook } from "lucide-react"
 import Image from "next/image"
 
-const WHATSAPP_URL = "https://wa.me/971529612199"
-const INSTAGRAM_URL =
-  "https://www.instagram.com/mintsulaimani?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw=="
+const WHATSAPP_URL = "https://wa.me/971588409478"
+const INSTAGRAM_URL = "https://www.instagram.com/jazoraholidays?stkn=ZTVqdmpkNTF2bzU4"
 const CONTACT_EMAIL = "mailto:info@jazoraholidays.com"
 
 function WhatsAppIcon({ className }: { className?: string }) {

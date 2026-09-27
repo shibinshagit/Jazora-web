@@ -7,7 +7,7 @@ import { ArrowUpRight } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 
-const WHATSAPP_URL = "https://wa.me/971529612199"
+const WHATSAPP_URL = "https://wa.me/971588409478"
 const IMG_V = "v2"
 const FEATURED_MS = 3000
 const COUNTRY_MS = 14000

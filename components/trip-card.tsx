@@ -15,7 +15,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
-const WHATSAPP_URL = "https://wa.me/971529612199"
+const WHATSAPP_URL = "https://wa.me/971588409478"
 
 export interface TripCardProps {
   name: string

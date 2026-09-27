@@ -1,6 +1,6 @@
 "use client"
 
-const WHATSAPP_URL = "https://wa.me/971529612199"
+const WHATSAPP_URL = "https://wa.me/971588409478"
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (

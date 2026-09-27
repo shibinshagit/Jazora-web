@@ -47,8 +47,7 @@ const trips = [
 ]
 
 const SLIDE_MS = 3800
-const INSTAGRAM_URL =
-  "https://www.instagram.com/mintsulaimani?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw=="
+const INSTAGRAM_URL = "https://www.instagram.com/jazoraholidays?stkn=ZTVqdmpkNTF2bzU4"
 
 function InstagramSpinner({ size = "md" }: { size?: "sm" | "md" }) {
   const dim = size === "sm" ? "h-3.5 w-3.5 border-[1.5px]" : "h-9 w-9 border-[2.5px]"
@@ -150,7 +149,7 @@ export function PhoneTripGallery() {
               <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-rose-500" />
             </span>
             <span className="truncate text-[11px] font-semibold tracking-tight text-white md:text-[12px] lg:text-[13px]">
-              mintsulaimani
+              jazoraholidays
             </span>
           </div>
           <a
