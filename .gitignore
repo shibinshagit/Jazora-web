@@ -26,7 +26,10 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# raw trip photo dumps (site uses optimized /public/trips)
+# raw trip photo dumps (site uses optimized /public/trips and /public/gallery/web)
 /public/Armenia/
 /public/Azerbaijan/
 /public/Georgia/
+/public/gallery/**/*.JPG.jpeg
+/public/gallery/**/*.HEIC
+/public/gallery/logo/

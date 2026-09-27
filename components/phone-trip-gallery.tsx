@@ -10,14 +10,29 @@ const trips = [
     note: "Discover with Jazora",
   },
   {
+    src: "/gallery/web/IMG_0563.jpg",
+    place: "Iris Hotel",
+    note: "Lobby frame, Baku nights",
+  },
+  {
     src: "/gallery/web/IMG_2431.jpg",
     place: "Tashkent",
     note: "Under the plane trees",
   },
   {
+    src: "/gallery/web/IMG_6954.jpg",
+    place: "Bridge walk",
+    note: "Snow on the cables",
+  },
+  {
     src: "/gallery/web/IMG_0503.jpg",
     place: "Canyon day",
     note: "The whole crew showed up",
+  },
+  {
+    src: "/gallery/web/IMG_0564.jpg",
+    place: "City bloom",
+    note: "Roses and ready smiles",
   },
   {
     src: "/gallery/web/IMG_0519.jpg",
