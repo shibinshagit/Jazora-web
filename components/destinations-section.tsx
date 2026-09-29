@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 
 const WHATSAPP_URL = "https://wa.me/971588409478"
-const IMG_V = "v5"
+const IMG_V = "v6"
 const PHOTO_MS = 4200
 const COUNTRY_MS = 16000
 
@@ -122,6 +122,74 @@ const destinations: Destination[] = [
       "/trips/uzbekistan/04.jpg",
       "/trips/uzbekistan/web/03.jpg",
       "/trips/uzbekistan/05.jpg",
+    ],
+  },
+  {
+    id: "jordan",
+    name: "Jordan",
+    line: "Petra at dawn, Wadi Rum nights, and the Dead Sea float.",
+    season: "March–May & September–November",
+    duration: "6–8 days",
+    images: [
+      "/trips/jordan/01.jpg",
+      "/trips/jordan/web/01.jpg",
+      "/trips/jordan/03.jpg",
+      "/trips/jordan/web/03.jpg",
+      "/trips/jordan/04.jpg",
+      "/trips/jordan/web/02.jpg",
+      "/trips/jordan/05.jpg",
+      "/trips/jordan/02.jpg",
+    ],
+  },
+  {
+    id: "vietnam",
+    name: "Vietnam",
+    line: "Ha Long karsts, temple courtyards, and Hanoi street nights.",
+    season: "October–April",
+    duration: "8–10 days",
+    images: [
+      "/trips/vietnam/web/01.jpg",
+      "/trips/vietnam/01.jpg",
+      "/trips/vietnam/02.jpg",
+      "/trips/vietnam/web/02.jpg",
+      "/trips/vietnam/03.jpg",
+      "/trips/vietnam/web/03.jpg",
+      "/trips/vietnam/04.jpg",
+      "/trips/vietnam/05.jpg",
+    ],
+  },
+  {
+    id: "srilanka",
+    name: "Sri Lanka",
+    line: "Sigiriya rock, tea country mornings, and the Ella train.",
+    season: "December–April",
+    duration: "7–10 days",
+    images: [
+      "/trips/srilanka/01.jpg",
+      "/trips/srilanka/web/01.jpg",
+      "/trips/srilanka/02.jpg",
+      "/trips/srilanka/web/02.jpg",
+      "/trips/srilanka/03.jpg",
+      "/trips/srilanka/web/03.jpg",
+      "/trips/srilanka/04.jpg",
+      "/trips/srilanka/05.jpg",
+    ],
+  },
+  {
+    id: "nepal",
+    name: "Nepal",
+    line: "Himalayan ridges, temple squares, and quiet mountain lodges.",
+    season: "March–May & September–November",
+    duration: "7–10 days",
+    images: [
+      "/trips/nepal/01.jpg",
+      "/trips/nepal/web/01.jpg",
+      "/trips/nepal/02.jpg",
+      "/trips/nepal/web/02.jpg",
+      "/trips/nepal/03.jpg",
+      "/trips/nepal/web/03.jpg",
+      "/trips/nepal/04.jpg",
+      "/trips/nepal/05.jpg",
     ],
   },
 ]
@@ -256,6 +324,14 @@ export function DestinationsSection() {
               </button>
             )
           })}
+          <a
+            href={WHATSAPP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="relative shrink-0 px-3 py-3 text-sm text-white/45 italic transition-colors hover:text-white/80 sm:px-4 md:px-5 md:text-base"
+          >
+            many more
+          </a>
         </div>
       </div>
 

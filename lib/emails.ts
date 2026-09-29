@@ -14,59 +14,94 @@ export function buildWelcomeEmail(payload: WelcomePayload) {
   const greet = firstName(payload.name)
   const site = siteConfig.url
   const whatsapp = siteConfig.whatsapp
+  const logo = `${site}/images/logo/logomain.png`
+  const icon = `${site}/images/logo/logoicon.png`
+  const destination = payload.destination.trim()
 
   const text = [
-    `Hi ${greet},`,
+    `Hey, traveller!`,
     "",
-    "Welcome to Team Jazora.",
+    "Your Jazora trip enquiry is in!",
+    destination ? `Route: ${destination}` : null,
     "",
-    `Got your note about ${payload.destination} — someone from our side will reach out soon.`,
+    "We're checking the details and will be in touch soon with some travel magic.",
     "",
-    "If you want to chat sooner, just WhatsApp us:",
+    "Can't wait? WhatsApp us and let's get planning:",
     whatsapp,
     "",
-    "Happy to have you with us.",
-    "",
-    "— Jazora",
-  ].join("\n")
+    "Adventure awaits.",
+    "— Team Jazora",
+  ]
+    .filter((line) => line !== null)
+    .join("\n")
 
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Welcome to Team Jazora</title>
+  <title>Your Jazora trip enquiry is in</title>
 </head>
-<body style="margin:0;padding:0;background:#fafafa;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
-  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="padding:40px 16px;">
+<body style="margin:0;padding:0;background:#ece8df;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background:#ece8df;padding:32px 16px;">
     <tr>
       <td align="center">
-        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:480px;">
+        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="max-width:560px;background:#0b0b0b;border-radius:24px;overflow:hidden;">
           <tr>
-            <td style="padding:8px 4px 28px;color:#111;font-size:16px;line-height:1.7;">
-              <p style="margin:0 0 20px;">Hi ${escapeHtml(greet)},</p>
-              <p style="margin:0 0 20px;font-size:22px;line-height:1.35;font-family:Georgia,'Times New Roman',serif;">
-                Welcome to Team Jazora.
+            <td align="center" style="padding:36px 32px 28px;background:#0b0b0b;">
+              <img src="${logo}" alt="Jazora Holidays" width="220" style="display:block;width:220px;max-width:80%;height:auto;border:0;" />
+            </td>
+          </tr>
+          <tr>
+            <td style="height:3px;background:linear-gradient(90deg,#c9a227,#f1d27a,#c9a227);font-size:0;line-height:0;">&nbsp;</td>
+          </tr>
+          <tr>
+            <td style="padding:36px 32px 12px;background:#fffaf3;color:#1a1a1a;">
+              <p style="margin:0 0 8px;font-size:13px;letter-spacing:0.18em;text-transform:uppercase;color:#8a7a52;">Trip enquiry</p>
+              <h1 style="margin:0 0 20px;font-size:28px;line-height:1.25;font-weight:600;color:#111;">
+                Hey, traveller! &#128075;&#127757;
+              </h1>
+              <p style="margin:0 0 16px;font-size:17px;line-height:1.6;color:#222;">
+                Your Jazora trip enquiry is in! &#127881;
               </p>
-              <p style="margin:0 0 20px;color:#333;">
-                Got your note about <strong>${escapeHtml(payload.destination)}</strong> — someone from our side will reach out soon.
+              ${
+                destination
+                  ? `<p style="margin:0 0 20px;display:inline-block;padding:8px 14px;border-radius:999px;background:#111;color:#f6e7b2;font-size:13px;letter-spacing:0.02em;">${escapeHtml(destination)}</p>`
+                  : ""
+              }
+              <p style="margin:0 0 16px;font-size:16px;line-height:1.7;color:#444;">
+                We're checking the details and will be in touch soon with some travel magic. &#10024;
               </p>
-              <p style="margin:0 0 20px;color:#333;">
-                If you want to chat sooner, just
-                <a href="${whatsapp}" style="color:#111;text-decoration:underline;">WhatsApp us</a>.
+              <p style="margin:0 0 28px;font-size:16px;line-height:1.7;color:#444;">
+                Can't wait? WhatsApp us and let's get planning! &#128172;
               </p>
-              <p style="margin:0 0 28px;color:#333;">
-                Happy to have you with us.
+              <table role="presentation" cellspacing="0" cellpadding="0" style="margin:0 0 32px;">
+                <tr>
+                  <td align="center" style="border-radius:999px;background:#111;">
+                    <a href="${whatsapp}" style="display:inline-block;padding:14px 28px;font-size:15px;font-weight:600;color:#fff;text-decoration:none;letter-spacing:0.02em;">
+                      WhatsApp Team Jazora
+                    </a>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:0 0 6px;font-size:16px;line-height:1.6;color:#222;">
+                Adventure awaits. &#127965;&#65039;&#9992;&#65039;
               </p>
-              <p style="margin:0;color:#111;">
-                — Jazora
+              <p style="margin:0;font-size:16px;line-height:1.6;color:#111;">
+                &mdash; Team Jazora
               </p>
             </td>
           </tr>
           <tr>
-            <td style="padding:8px 4px 0;border-top:1px solid #eee;">
-              <p style="margin:16px 0 0;font-size:12px;line-height:1.5;color:#999;">
-                <a href="${site}" style="color:#999;text-decoration:none;">jazoraholidays.com</a>
+            <td align="center" style="padding:24px 32px 32px;background:#fffaf3;border-top:1px solid #efe6d4;">
+              <img src="${icon}" alt="" width="44" height="44" style="display:block;margin:0 auto 12px;width:44px;height:44px;border:0;" />
+              <p style="margin:0 0 4px;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:#8a7a52;">
+                The Aura of Discovering The World
+              </p>
+              <p style="margin:0;font-size:12px;line-height:1.5;color:#aaa;">
+                <a href="${site}" style="color:#aaa;text-decoration:none;">jazoraholidays.com</a>
+                &nbsp;&middot;&nbsp;
+                <a href="${whatsapp}" style="color:#aaa;text-decoration:none;">WhatsApp</a>
               </p>
             </td>
           </tr>
@@ -78,7 +113,7 @@ export function buildWelcomeEmail(payload: WelcomePayload) {
 </html>`
 
   return {
-    subject: `Welcome to Team Jazora, ${greet}`,
+    subject: `${greet}, your Jazora trip enquiry is in`,
     text,
     html,
   }
