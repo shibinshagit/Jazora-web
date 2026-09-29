@@ -20,9 +20,45 @@ type Props = {
   onOpenChange: (open: boolean) => void
 }
 
+const COUNTRY_CODES = [
+  { code: "971", label: "AE +971" },
+  { code: "91", label: "IN +91" },
+  { code: "966", label: "SA +966" },
+  { code: "974", label: "QA +974" },
+  { code: "968", label: "OM +968" },
+  { code: "965", label: "KW +965" },
+  { code: "973", label: "BH +973" },
+  { code: "20", label: "EG +20" },
+  { code: "44", label: "UK +44" },
+  { code: "1", label: "US +1" },
+  { code: "92", label: "PK +92" },
+  { code: "880", label: "BD +880" },
+  { code: "94", label: "LK +94" },
+  { code: "977", label: "NP +977" },
+  { code: "62", label: "ID +62" },
+  { code: "66", label: "TH +66" },
+  { code: "84", label: "VN +84" },
+] as const
+
+function formatLocalNumber(raw: string) {
+  return raw.replace(/\D/g, "").slice(0, 12)
+}
+
+function buildPhone(dialCode: string, local: string) {
+  const digits = formatLocalNumber(local)
+  if (!digits) return `+${dialCode}`
+  return `+${dialCode}${digits}`
+}
+
+function isValidPhone(dialCode: string, local: string) {
+  const digits = formatLocalNumber(local)
+  return /^\d{1,4}$/.test(dialCode) && /^\d{7,12}$/.test(digits)
+}
+
 export function TripInquiryDialog({ open, onOpenChange }: Props) {
   const [name, setName] = useState("")
-  const [phone, setPhone] = useState("")
+  const [dialCode, setDialCode] = useState("971")
+  const [localPhone, setLocalPhone] = useState("")
   const [email, setEmail] = useState("")
   const [destination, setDestination] = useState("")
   const [promo, setPromo] = useState(false)
@@ -31,9 +67,19 @@ export function TripInquiryDialog({ open, onOpenChange }: Props) {
   )
   const [error, setError] = useState("")
 
+  const phone = buildPhone(dialCode, localPhone)
+  const canSubmit =
+    name.trim().length > 0 &&
+    isValidPhone(dialCode, localPhone) &&
+    email.trim().length > 0 &&
+    destination.trim().length > 0 &&
+    promo &&
+    status !== "loading"
+
   const reset = () => {
     setName("")
-    setPhone("")
+    setDialCode("971")
+    setLocalPhone("")
     setEmail("")
     setDestination("")
     setPromo(false)
@@ -52,8 +98,16 @@ export function TripInquiryDialog({ open, onOpenChange }: Props) {
     e.preventDefault()
     setError("")
 
-    if (!name.trim() || !phone.trim() || !email.trim() || !destination.trim()) {
+    if (!name.trim() || !email.trim() || !destination.trim()) {
       setError("Please fill in all required fields.")
+      return
+    }
+    if (!isValidPhone(dialCode, localPhone)) {
+      setError("Enter a valid WhatsApp number (7–12 digits after the country code).")
+      return
+    }
+    if (!promo) {
+      setError("Please agree to receive emails from Jazora to submit your request.")
       return
     }
 
@@ -64,10 +118,10 @@ export function TripInquiryDialog({ open, onOpenChange }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: name.trim(),
-          phone: phone.trim(),
+          phone,
           email: email.trim(),
           destination: destination.trim(),
-          promo,
+          promo: true,
         }),
       })
       const data = (await res.json().catch(() => ({}))) as {
@@ -195,19 +249,38 @@ export function TripInquiryDialog({ open, onOpenChange }: Props) {
 
                 <div className="space-y-1.5">
                   <Label htmlFor="trip-phone">
-                    Phone / WhatsApp <span className="text-foreground/50">*</span>
+                    WhatsApp <span className="text-foreground/50">*</span>
                   </Label>
-                  <Input
-                    id="trip-phone"
-                    name="phone"
-                    type="tel"
-                    autoComplete="tel"
-                    required
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder="+971 5X XXX XXXX"
-                    className="h-11 rounded-xl border-zinc-200 bg-white/80 px-3.5 text-base shadow-none md:text-[15px]"
-                  />
+                  <div className="flex gap-2">
+                    <select
+                      aria-label="Country code"
+                      value={dialCode}
+                      onChange={(e) => setDialCode(e.target.value)}
+                      className="h-11 shrink-0 rounded-xl border border-zinc-200 bg-white/80 px-2.5 text-sm text-foreground shadow-none outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
+                    >
+                      {COUNTRY_CODES.map((c) => (
+                        <option key={c.code} value={c.code}>
+                          {c.label}
+                        </option>
+                      ))}
+                    </select>
+                    <Input
+                      id="trip-phone"
+                      name="phone"
+                      type="tel"
+                      inputMode="numeric"
+                      autoComplete="tel-national"
+                      required
+                      value={localPhone}
+                      onChange={(e) => setLocalPhone(formatLocalNumber(e.target.value))}
+                      placeholder="501234567"
+                      maxLength={12}
+                      className="h-11 flex-1 rounded-xl border-zinc-200 bg-white/80 px-3.5 text-base shadow-none md:text-[15px]"
+                    />
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">
+                    Digits only · saves as {phone.length > dialCode.length + 1 ? phone : `+${dialCode}…`}
+                  </p>
                 </div>
 
                 <div className="space-y-1.5">
@@ -242,15 +315,24 @@ export function TripInquiryDialog({ open, onOpenChange }: Props) {
                   />
                 </div>
 
-                <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-zinc-200/80 bg-white/50 px-3.5 py-3">
+                <label
+                  className={cn(
+                    "flex cursor-pointer items-start gap-3 rounded-xl border px-3.5 py-3 transition-colors",
+                    promo
+                      ? "border-foreground/20 bg-white"
+                      : "border-zinc-200/80 bg-white/50",
+                  )}
+                >
                   <Checkbox
                     checked={promo}
                     onCheckedChange={(v) => setPromo(v === true)}
                     className="mt-0.5"
                     id="trip-promo"
+                    required
                   />
                   <span className="text-sm leading-snug text-muted-foreground">
-                    Receive promotional emails about new departures and offers from Jazora Holidays.
+                    <span className="text-foreground">Required.</span> Receive promotional emails
+                    about new departures and offers from Jazora Holidays.
                   </span>
                 </label>
               </div>
@@ -263,8 +345,8 @@ export function TripInquiryDialog({ open, onOpenChange }: Props) {
 
               <button
                 type="submit"
-                disabled={status === "loading"}
-                className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground text-sm font-medium text-background transition-opacity hover:opacity-90 disabled:opacity-60"
+                disabled={!canSubmit}
+                className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground text-sm font-medium text-background transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
               >
                 {status === "loading" ? (
                   <>

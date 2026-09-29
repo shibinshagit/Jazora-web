@@ -7,10 +7,15 @@ export const runtime = "nodejs"
 
 const bodySchema = z.object({
   name: z.string().trim().min(1).max(120),
-  phone: z.string().trim().min(6).max(40),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^\+\d{8,16}$/, "Phone must include country code and number"),
   email: z.string().trim().email().max(160),
   destination: z.string().trim().min(1).max(240),
-  promo: z.boolean(),
+  promo: z.literal(true, {
+    errorMap: () => ({ message: "Promotional email consent is required." }),
+  }),
 })
 
 type SheetResult =
