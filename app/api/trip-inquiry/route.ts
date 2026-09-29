@@ -33,27 +33,58 @@ async function appendToGoogleSheet(payload: {
 }): Promise<SheetResult> {
   const webhook = process.env.TRIP_FORM_WEBHOOK_URL
   if (!webhook) {
-    throw new Error("TRIP_FORM_WEBHOOK_URL is not set")
+    return { ok: false, error: "TRIP_FORM_WEBHOOK_URL is not set" }
   }
 
-  const res = await fetch(webhook, {
+  // Apps Script web apps often 302 to a one-time URL; follow redirects and
+  // re-POST if Google turns the follow into a GET (common 404 HTML page).
+  const body = JSON.stringify({
+    timestamp: payload.submittedAt,
+    name: payload.name,
+    phone: payload.phone,
+    email: payload.email,
+    destination: payload.destination,
+    promo: payload.promo ? "Yes" : "No",
+    source: "jazora-web",
+  })
+
+  let res = await fetch(webhook, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      timestamp: payload.submittedAt,
-      name: payload.name,
-      phone: payload.phone,
-      email: payload.email,
-      destination: payload.destination,
-      promo: payload.promo ? "Yes" : "No",
-      source: "jazora-web",
-    }),
-    redirect: "follow",
+    body,
+    redirect: "manual",
   })
+
+  // Follow up to 5 redirects, preserving POST where possible
+  let hops = 0
+  while (hops < 5 && res.status >= 300 && res.status < 400) {
+    const location = res.headers.get("location")
+    if (!location) break
+    hops += 1
+    res = await fetch(location, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body,
+      redirect: "manual",
+    })
+  }
+
+  // If we still landed on a redirect that became a non-POST, try one follow-all POST
+  if (res.status >= 300 && res.status < 400) {
+    res = await fetch(webhook, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body,
+      redirect: "follow",
+    })
+  }
 
   const text = await res.text().catch(() => "")
   if (!res.ok) {
-    throw new Error(`Google Sheet webhook failed (${res.status}): ${text.slice(0, 240)}`)
+    return {
+      ok: false,
+      error: `Google Sheet webhook failed (${res.status}): ${text.slice(0, 240)}`,
+    }
   }
 
   try {
@@ -73,6 +104,12 @@ async function appendToGoogleSheet(payload: {
     return { ok: true }
   } catch {
     // Non-JSON success body from older deployments
+    if (text.includes("Sorry") || text.includes("<!DOCTYPE")) {
+      return {
+        ok: false,
+        error: `Google Sheet webhook returned HTML instead of JSON (${res.status}). Redeploy the Apps Script web app and update TRIP_FORM_WEBHOOK_URL.`,
+      }
+    }
     return { ok: true }
   }
 }
@@ -163,10 +200,7 @@ export async function POST(request: Request) {
       )
     }
 
-    if (!sheetResult.ok) {
-      throw new Error(sheetResult.error)
-    }
-
+    // Always attempt emails — don't lose the lead if Sheets is briefly down
     const [team, welcome] = await Promise.allSettled([
       notifyTeam(inquiry),
       sendWelcomeIfOptedIn(inquiry),
@@ -181,12 +215,39 @@ export async function POST(request: Request) {
     if (welcome.status === "rejected") {
       console.warn("[trip-inquiry] welcome email error", welcome.reason)
     }
+    if (team.status === "rejected") {
+      console.warn("[trip-inquiry] team notify error", team.reason)
+    }
+
+    if (!sheetResult.ok) {
+      console.error("[trip-inquiry] sheet failed", sheetResult.error)
+      const teamOk =
+        team.status === "fulfilled" && (team.value.ok || team.value.skipped)
+      const welcomeOk =
+        welcome.status === "fulfilled" && (welcome.value.ok || welcome.value.skipped)
+
+      // Soft success if at least one email path worked — lead is not lost
+      if (teamOk || welcomeOk) {
+        return NextResponse.json({
+          ok: true,
+          warning: "saved_via_email",
+        })
+      }
+
+      return NextResponse.json(
+        {
+          error:
+            "Could not reach Google Sheet. Check TRIP_FORM_WEBHOOK_URL on Vercel matches the latest Apps Script /exec deploy URL.",
+        },
+        { status: 502 },
+      )
+    }
 
     return NextResponse.json({ ok: true })
   } catch (err) {
     console.error("[trip-inquiry]", err)
     return NextResponse.json(
-      { error: "Could not save to Google Sheet. Please try WhatsApp or email us." },
+      { error: "Could not save your inquiry. Please try WhatsApp or email us." },
       { status: 502 },
     )
   }
