@@ -1,10 +1,15 @@
+"use client"
+
+import { useState } from "react"
 import Link from "next/link"
 import { Linkedin, Instagram, Facebook } from "lucide-react"
 import Image from "next/image"
+import { siteConfig } from "@/lib/site"
 
-const WHATSAPP_URL = "https://wa.me/971588409478"
-const INSTAGRAM_URL = "https://www.instagram.com/jazoraholidays?stkn=ZTVqdmpkNTF2bzU4"
-const CONTACT_EMAIL = "mailto:info@jazoraholidays.com"
+const WHATSAPP_URL = siteConfig.whatsapp
+const INSTAGRAM_URL = siteConfig.instagram
+const CONTACT_EMAIL = siteConfig.email
+const CONTACT_PHONE = siteConfig.phoneDisplay
 
 function WhatsAppIcon({ className }: { className?: string }) {
   return (
@@ -14,15 +19,46 @@ function WhatsAppIcon({ className }: { className?: string }) {
   )
 }
 
+function CopyText({ value, label }: { value: string; label: string }) {
+  const [copied, setCopied] = useState(false)
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(value)
+    } catch {
+      const el = document.createElement("textarea")
+      el.value = value
+      el.setAttribute("readonly", "")
+      el.style.position = "absolute"
+      el.style.left = "-9999px"
+      document.body.appendChild(el)
+      el.select()
+      document.execCommand("copy")
+      document.body.removeChild(el)
+    }
+    setCopied(true)
+    window.setTimeout(() => setCopied(false), 1800)
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={handleCopy}
+      title="Click to copy"
+      aria-label={copied ? `${label} copied` : `Copy ${value}`}
+      className="text-sm text-muted-foreground hover:text-foreground transition-colors text-left break-all"
+    >
+      {copied ? "Copied!" : value}
+    </button>
+  )
+}
+
 const footerLinks = {
   company: [
     { label: "About", href: "#how-it-works", external: false },
     { label: "Journal", href: INSTAGRAM_URL, external: true },
   ],
-  support: [
-    { label: "Contact", href: CONTACT_EMAIL, external: true },
-    { label: "FAQ", href: "#faq", external: false },
-  ],
+  support: [{ label: "FAQ", href: "#faq", external: false }],
 }
 
 export function Footer() {
@@ -116,23 +152,20 @@ export function Footer() {
             <div>
               <h4 className="text-sm font-medium text-foreground mb-4 uppercase tracking-wider">Support</h4>
               <ul className="space-y-3">
+                <li>
+                  <CopyText value={CONTACT_EMAIL} label="Email" />
+                </li>
+                <li>
+                  <CopyText value={CONTACT_PHONE} label="Phone" />
+                </li>
                 {footerLinks.support.map((link, i) => (
                   <li key={i}>
-                    {link.external ? (
-                      <a
-                        href={link.href}
-                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        {link.label}
-                      </a>
-                    ) : (
-                      <Link
-                        href={link.href}
-                        className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                      >
-                        {link.label}
-                      </Link>
-                    )}
+                    <Link
+                      href={link.href}
+                      className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      {link.label}
+                    </Link>
                   </li>
                 ))}
               </ul>

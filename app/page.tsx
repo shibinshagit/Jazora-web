@@ -13,6 +13,7 @@ import { CTASection } from "@/components/cta-section"
 import { Footer } from "@/components/footer"
 import { WhatsAppFloat } from "@/components/whatsapp-float"
 import { SiteReadyGate } from "@/components/site-ready-gate"
+import { TripInquiryProvider } from "@/components/trip-inquiry-provider"
 import { siteConfig } from "@/lib/site"
 
 export const metadata: Metadata = {
@@ -31,21 +32,23 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <SiteReadyGate>
-      <main className="min-h-screen bg-background">
-        <Header />
-        <HeroSection />
-        <DestinationsSection />
-        <PricingSection />
-        <ManifestoSection />
-        <StatsSection />
-        <ServicesSection />
-        <CTASection />
-        <TestimonialsSection />
-        <FeaturesSection />
-        <FAQSection />
-        <Footer />
-        <WhatsAppFloat />
-      </main>
+      <TripInquiryProvider>
+        <main className="min-h-screen bg-background">
+          <Header />
+          <HeroSection />
+          <PricingSection />
+          <DestinationsSection />
+          <ManifestoSection />
+          <StatsSection />
+          <ServicesSection />
+          <CTASection />
+          <TestimonialsSection />
+          <FeaturesSection />
+          <FAQSection />
+          <Footer />
+          <WhatsAppFloat />
+        </main>
+      </TripInquiryProvider>
     </SiteReadyGate>
   )
 }

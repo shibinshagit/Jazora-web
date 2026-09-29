@@ -33,3 +33,6 @@ next-env.d.ts
 /public/gallery/**/*.JPG.jpeg
 /public/gallery/**/*.HEIC
 /public/gallery/logo/
+/public/trips/thailandimages/
+/public/trips/Kyrgyzstanimages/
+/public/trips/Uzbekistanimages/

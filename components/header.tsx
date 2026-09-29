@@ -4,11 +4,11 @@ import type React from "react"
 import { useState } from "react"
 import Image from "next/image"
 import { Menu, X, ArrowUpRight, ArrowRight } from "lucide-react"
-
-const WHATSAPP_URL = "https://wa.me/971588409478"
+import { useTripInquiry } from "@/components/trip-inquiry-provider"
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false)
+  const { openInquiry } = useTripInquiry()
   const isScrolled = true
 
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
@@ -35,6 +35,44 @@ export function Header() {
       behavior: "smooth",
     })
   }
+
+  const PlanTripButton = ({ className = "" }: { className?: string }) => (
+    <button
+      type="button"
+      onClick={() => {
+        setIsOpen(false)
+        openInquiry()
+      }}
+      className={`relative flex items-center gap-0 border rounded-full pl-5 pr-1 py-1 transition-all duration-300 group overflow-hidden ${
+        isScrolled ? "border-zinc-300" : "border-border"
+      } ${className}`}
+    >
+      <span
+        className={`absolute inset-0 rounded-full scale-x-0 origin-right group-hover:scale-x-100 transition-transform duration-300 ${
+          isScrolled ? "bg-black" : "bg-foreground"
+        }`}
+      />
+      <span
+        className={`text-sm pr-3 relative z-10 transition-colors duration-300 ${
+          isScrolled ? "text-black group-hover:text-white" : "text-foreground group-hover:text-background"
+        }`}
+      >
+        Plan a trip
+      </span>
+      <span className="w-8 h-8 rounded-full flex items-center justify-center relative z-10">
+        <ArrowRight
+          className={`w-4 h-4 group-hover:opacity-0 absolute transition-opacity duration-300 ${
+            isScrolled ? "text-black" : "text-foreground"
+          }`}
+        />
+        <ArrowUpRight
+          className={`w-4 h-4 opacity-0 group-hover:opacity-100 transition-all duration-300 ${
+            isScrolled ? "text-black group-hover:text-white" : "text-foreground group-hover:text-background"
+          }`}
+        />
+      </span>
+    </button>
+  )
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "px-4 pt-4" : ""}`}>
@@ -114,39 +152,7 @@ export function Header() {
           </nav>
 
           <div className="hidden md:flex items-center gap-1">
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`relative flex items-center gap-0 border rounded-full pl-5 pr-1 py-1 transition-all duration-300 group overflow-hidden ${
-                isScrolled ? "border-zinc-300" : "border-border"
-              }`}
-            >
-              <span
-                className={`absolute inset-0 rounded-full scale-x-0 origin-right group-hover:scale-x-100 transition-transform duration-300 ${
-                  isScrolled ? "bg-black" : "bg-foreground"
-                }`}
-              />
-              <span
-                className={`text-sm pr-3 relative z-10 transition-colors duration-300 ${
-                  isScrolled ? "text-black group-hover:text-white" : "text-foreground group-hover:text-background"
-                }`}
-              >
-                Plan a trip
-              </span>
-              <span className="w-8 h-8 rounded-full flex items-center justify-center relative z-10">
-                <ArrowRight
-                  className={`w-4 h-4 group-hover:opacity-0 absolute transition-opacity duration-300 ${
-                    isScrolled ? "text-black" : "text-foreground"
-                  }`}
-                />
-                <ArrowUpRight
-                  className={`w-4 h-4 opacity-0 group-hover:opacity-100 transition-all duration-300 ${
-                    isScrolled ? "text-black group-hover:text-white" : "text-foreground group-hover:text-background"
-                  }`}
-                />
-              </span>
-            </a>
+            <PlanTripButton />
           </div>
 
           <button
@@ -211,43 +217,7 @@ export function Header() {
             <div
               className={`flex flex-col gap-3 mt-4 pt-4 border-t ${isScrolled ? "border-zinc-200" : "border-border"}`}
             >
-              <a href="#" className={isScrolled ? "text-black" : "text-foreground"}>
-                Sign in
-              </a>
-              <a
-                href={WHATSAPP_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => setIsOpen(false)}
-                className={`relative flex items-center gap-0 border rounded-full pl-5 pr-1 py-1 w-fit transition-all duration-300 group overflow-hidden ${
-                  isScrolled ? "border-zinc-300" : "border-border"
-                }`}
-              >
-                <span
-                  className={`absolute inset-0 rounded-full scale-x-0 origin-right group-hover:scale-x-100 transition-transform duration-300 ${
-                    isScrolled ? "bg-black" : "bg-foreground"
-                  }`}
-                />
-                <span
-                  className={`text-sm pr-3 relative z-10 transition-colors duration-300 ${
-                    isScrolled ? "text-black group-hover:text-white" : "text-foreground group-hover:text-background"
-                  }`}
-                >
-                  Plan a trip
-                </span>
-                <span className="w-8 h-8 rounded-full flex items-center justify-center relative z-10">
-                  <ArrowRight
-                    className={`w-4 h-4 group-hover:opacity-0 absolute transition-opacity duration-300 ${
-                      isScrolled ? "text-black" : "text-foreground"
-                    }`}
-                  />
-                  <ArrowUpRight
-                    className={`w-4 h-4 opacity-0 group-hover:opacity-100 transition-all duration-300 ${
-                      isScrolled ? "text-black group-hover:text-white" : "text-foreground group-hover:text-background"
-                    }`}
-                  />
-                </span>
-              </a>
+              <PlanTripButton className="w-fit" />
             </div>
           </nav>
         )}

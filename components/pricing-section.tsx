@@ -6,76 +6,58 @@ import { TripCard } from "./trip-card"
 
 const trips = [
   {
-    name: "Amalfi Coast",
-    location: "Positano, Italy",
-    duration: "8 days",
-    season: "May–October",
-    image: "/images/property-beach-villa.jpg",
-    price: 14290,
-    type: "Coastal journey",
-    highlights: ["Cliff towns", "Boat day", "Local cooking"],
+    name: "Vietnam",
+    location: "Ha Long Bay to Hanoi",
+    duration: "8–10 days",
+    season: "Coming season",
+    image: "/trips/upcoming/vietnam.jpg",
+    type: "Next departure",
+    highlights: ["Ha Long Bay", "Old Quarter nights", "Local kitchens"],
     includes: ["Flights", "Guide", "Hotels"],
-    rating: 4.9,
+    popular: true,
   },
   {
-    name: "Patagonia Trek",
-    location: "El Chaltén, Argentina",
-    duration: "11 days",
-    season: "March & November",
-    image: "/images/property-mountain-cabin.jpg",
-    price: 19900,
-    type: "Wilderness expedition",
-    highlights: ["Glacier hike", "Estancia stay", "Expert guides"],
-    includes: ["Meals", "Transfers", "Guide"],
-    rating: 4.8,
+    name: "Thailand",
+    location: "Bangkok to the islands",
+    duration: "7–9 days",
+    season: "Coming season",
+    image: "/trips/upcoming/thailand.jpg",
+    type: "Next departure",
+    highlights: ["Temple mornings", "Long-tail boats", "Street food trails"],
+    includes: ["Flights", "Guide", "Hotels"],
+    popular: true,
   },
   {
-    name: "Japan in Spring",
-    location: "Tokyo to Kyoto",
-    duration: "12 days",
-    season: "March–April",
-    image: "/images/property-city-loft.jpg",
-    price: 17180,
-    type: "Small-group departure",
-    highlights: ["Temples", "Bullet train", "Ryokan nights"],
-    includes: ["Flights", "Rail", "Guide"],
-    rating: 4.9,
+    name: "Jordan",
+    location: "Amman to Petra",
+    duration: "6–8 days",
+    season: "Coming season",
+    image: "/trips/upcoming/jordan.jpg",
+    type: "Next departure",
+    highlights: ["Petra at dawn", "Wadi Rum nights", "Dead Sea float"],
+    includes: ["Flights", "Guide", "Hotels"],
   },
   {
-    name: "Tuscan Harvest",
-    location: "Florence, Italy",
-    duration: "7 days",
-    season: "September–October",
-    image: "/images/property-tuscan-estate.jpg",
-    price: 15120,
-    type: "Private journey",
-    highlights: ["Vineyards", "Cooking class", "Hill towns"],
-    includes: ["Hotels", "Driver", "Meals"],
-    rating: 4.9,
+    name: "Kyrgyzstan",
+    location: "Issyk-Kul to Song-Kul",
+    duration: "7–10 days",
+    season: "Coming soon",
+    image: "/trips/kyrgyzstan/web/03.jpg",
+    type: "Coming soon",
+    highlights: ["Alpine lakes", "Yurt nights", "Tian Shan ridges"],
+    includes: ["Flights", "Guide", "Hotels"],
+    comingSoon: true,
   },
   {
-    name: "Bali & Beyond",
-    location: "Ubud, Indonesia",
-    duration: "9 days",
-    season: "Year-round",
-    image: "/images/property-tropical-bungalow.jpg",
-    price: 10130,
-    type: "Island retreat",
-    highlights: ["Rice terraces", "Temples", "Sunrise trek"],
-    includes: ["Hotels", "Guide", "Transfers"],
-    rating: 4.8,
-  },
-  {
-    name: "Swiss Lakes",
-    location: "Lucerne, Switzerland",
-    duration: "6 days",
-    season: "June–September",
-    image: "/images/property-lakefront-modern.jpg",
-    price: 12990,
-    type: "Scenic rail",
-    highlights: ["Lake cruise", "Mountain railway", "Alpine villages"],
-    includes: ["Rail pass", "Hotels", "Guide"],
-    rating: 4.9,
+    name: "Uzbekistan",
+    location: "Samarkand to Bukhara",
+    duration: "7–10 days",
+    season: "Coming soon",
+    image: "/trips/uzbekistan/web/01.jpg",
+    type: "Coming soon",
+    highlights: ["Registan square", "Blue domes", "Silk Road cities"],
+    includes: ["Flights", "Guide", "Hotels"],
+    comingSoon: true,
   },
 ]
 
@@ -115,7 +97,7 @@ export function PricingSection() {
   return (
     <section id="pricing" className="relative overflow-hidden py-20 sm:py-28 md:py-32">
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center select-none">
-        <span className="whitespace-nowrap text-center text-[22vw] font-bold leading-none tracking-tighter text-zinc-100 sm:text-[18vw] md:text-[14vw]">
+        <span className="text-center text-[22vw] leading-none font-bold tracking-tighter whitespace-nowrap text-zinc-100 sm:text-[18vw] md:text-[14vw]">
           TRIPS
         </span>
       </div>
@@ -123,13 +105,9 @@ export function PricingSection() {
       <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-6">
         <div className="mb-10 flex flex-col gap-6 sm:mb-14 md:mb-16 md:flex-row md:items-end md:justify-between">
           <div className="max-w-xl text-left md:max-w-2xl">
-            <h2 className="mb-3 font-serif text-3xl font-normal text-balance sm:mb-4 sm:text-4xl md:text-5xl">
+            <h2 className="font-serif text-3xl font-normal text-balance sm:text-4xl md:text-5xl">
               Upcoming departures
             </h2>
-            <p className="text-sm leading-relaxed text-muted-foreground sm:text-base">
-              International trips we design and lead. Prices are per person and include the route, stays, and local
-              team.
-            </p>
           </div>
 
           <div className="hidden items-center gap-2 md:flex">
@@ -158,18 +136,17 @@ export function PricingSection() {
       <div className="relative z-10">
         <div
           ref={scrollerRef}
-          className="flex snap-x snap-mandatory gap-3 overflow-x-auto overscroll-x-contain px-5 pb-2 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-4 sm:px-6 md:gap-5 [&::-webkit-scrollbar]:hidden"
+          className="flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain px-5 pb-3 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-5 sm:px-6 md:gap-6 [&::-webkit-scrollbar]:hidden"
         >
           {trips.map((trip) => (
             <div
               key={trip.name}
               data-trip-card
-              className="w-[min(86vw,340px)] shrink-0 snap-center sm:w-[min(70vw,380px)] sm:snap-start lg:w-[400px]"
+              className="group w-[min(82vw,320px)] shrink-0 snap-center sm:w-[min(62vw,350px)] sm:snap-start lg:w-[360px]"
             >
-              <TripCard {...trip} currency="AED" />
+              <TripCard {...trip} />
             </div>
           ))}
-          {/* end spacer so last card can snap with breathing room */}
           <div className="w-1 shrink-0 sm:w-2" aria-hidden />
         </div>
 

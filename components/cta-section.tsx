@@ -1,8 +1,11 @@
-import { ArrowUpRight } from "lucide-react"
+"use client"
 
-const WHATSAPP_URL = "https://wa.me/971588409478"
+import { ArrowUpRight } from "lucide-react"
+import { useTripInquiry } from "@/components/trip-inquiry-provider"
 
 export function CTASection() {
+  const { openInquiry } = useTripInquiry()
+
   return (
     <section className="py-32 px-6 relative overflow-hidden">
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
@@ -21,17 +24,16 @@ export function CTASection() {
           </p>
 
           <div className="flex justify-center">
-            <a
-              href={WHATSAPP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              type="button"
+              onClick={openInquiry}
               className="relative flex items-center justify-center gap-0 bg-foreground text-background rounded-full pl-6 pr-1.5 py-1.5 transition-all duration-300 group overflow-hidden"
             >
               <span className="text-sm pr-4">Plan a trip</span>
               <span className="w-10 h-10 bg-background rounded-full flex items-center justify-center">
                 <ArrowUpRight className="w-4 h-4 text-foreground" />
               </span>
-            </a>
+            </button>
           </div>
         </div>
       </div>
