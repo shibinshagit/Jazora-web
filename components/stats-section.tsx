@@ -1,40 +1,14 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import {
-  motion,
-  useMotionValueEvent,
-  useScroll,
-  useSpring,
-  useTransform,
-  type MotionValue,
-} from "framer-motion"
+import { motion, useInView } from "framer-motion"
+import { ArrowUpRight } from "lucide-react"
 
 const INSTAGRAM_URL = "https://www.instagram.com/jazoraholidays?stkn=ZTVqdmpkNTF2bzU4"
 
-type Milestone =
-  | { id: string; kind: "intro"; eyebrow: string; title: string; line: string }
-  | {
-      id: string
-      kind: "stat"
-      value: number
-      suffix: string
-      label: string
-      note: string
-      href?: string
-    }
-
-const milestones: Milestone[] = [
-  {
-    id: "intro",
-    kind: "intro",
-    eyebrow: "The road so far",
-    title: "Numbers that travel with us",
-    line: "A few markers from the routes we design and lead.",
-  },
+const stats = [
   {
     id: "countries",
-    kind: "stat",
     value: 24,
     suffix: "",
     label: "Countries",
@@ -42,7 +16,6 @@ const milestones: Milestone[] = [
   },
   {
     id: "followers",
-    kind: "stat",
     value: 157,
     suffix: "K+",
     label: "Followers",
@@ -51,53 +24,12 @@ const milestones: Milestone[] = [
   },
   {
     id: "community",
-    kind: "stat",
     value: 2,
     suffix: "K+",
     label: "Community",
     note: "Travellers who have walked the routes with us",
   },
-]
-
-/** Even ranges across the scrub, with a short hold on the last milestone */
-function rangeFor(index: number, total: number) {
-  const travel = 0.88
-  const start = (index / total) * travel
-  const end = ((index + 1) / total) * travel
-  return { start, end, mid: (start + end) / 2 }
-}
-
-function usePanelMotion(scrollYProgress: MotionValue<number>, index: number, total: number) {
-  const { start, end } = rangeFor(index, total)
-  const fadeIn = start
-  const solid = start + (end - start) * 0.22
-  const fadeOut = end - (end - start) * 0.18
-  const gone = end
-
-  const opacity = useTransform(
-    scrollYProgress,
-    [fadeIn, solid, fadeOut, gone],
-    index === total - 1 ? [0, 1, 1, 1] : [0, 1, 1, 0],
-  )
-  const y = useTransform(
-    scrollYProgress,
-    [fadeIn, solid, fadeOut, gone],
-    index === total - 1 ? [48, 0, 0, 0] : [48, 0, 0, -36],
-  )
-  const scale = useTransform(
-    scrollYProgress,
-    [fadeIn, solid, fadeOut, gone],
-    index === total - 1 ? [0.94, 1, 1, 1] : [0.94, 1, 1, 0.97],
-  )
-  const blur = useTransform(
-    scrollYProgress,
-    [fadeIn, solid, fadeOut, gone],
-    index === total - 1 ? [8, 0, 0, 0] : [8, 0, 0, 6],
-  )
-  const filter = useTransform(blur, (b) => `blur(${b}px)`)
-
-  return { opacity, y, scale, filter }
-}
+] as const
 
 function CountUp({
   value,
@@ -118,7 +50,7 @@ function CountUp({
       return
     }
 
-    const duration = 900
+    const duration = 1100
     let startTime: number | undefined
     let frame = 0
 
@@ -147,231 +79,101 @@ function CountUp({
   )
 }
 
-function MilestoneLayer({
-  milestone,
-  index,
-  total,
-  active,
-  scrollYProgress,
-}: {
-  milestone: Milestone
-  index: number
-  total: number
-  active: boolean
-  scrollYProgress: MotionValue<number>
-}) {
-  const { opacity, y, scale, filter } = usePanelMotion(scrollYProgress, index, total)
-
-  return (
-    <motion.div
-      style={{ opacity, y, scale, filter }}
-      className="pointer-events-none absolute inset-0 flex items-center justify-center px-8"
-      aria-hidden={!active}
-    >
-      <div
-        className={`mx-auto w-full max-w-3xl text-center ${active ? "pointer-events-auto" : ""}`}
-      >
-        {milestone.kind === "intro" ? (
-          <>
-            <p className="mb-4 text-xs tracking-[0.22em] text-muted-foreground uppercase">
-              {milestone.eyebrow}
-            </p>
-            <h2 className="font-serif text-4xl font-normal leading-[1.08] text-balance sm:text-5xl md:text-6xl lg:text-7xl">
-              {milestone.title}
-            </h2>
-            <p className="mx-auto mt-6 max-w-md text-base text-muted-foreground md:text-lg">
-              {milestone.line}
-            </p>
-          </>
-        ) : (
-          <>
-            <p className="font-mono text-xs tracking-[0.28em] text-muted-foreground uppercase">
-              {milestone.label}
-            </p>
-            <p className="mt-3 font-serif text-[26vw] leading-none tracking-tight text-foreground sm:text-[18vw] md:text-[12vw] lg:text-[9.5rem]">
-              <CountUp value={milestone.value} suffix={milestone.suffix} active={active} />
-            </p>
-            <p className="mx-auto mt-6 max-w-sm text-sm leading-relaxed text-muted-foreground md:text-base">
-              {milestone.note}
-            </p>
-            {milestone.href && (
-              <a
-                href={milestone.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-8 inline-flex border-b border-foreground pb-0.5 text-sm text-foreground transition-opacity hover:opacity-70"
-              >
-                Follow on Instagram
-              </a>
-            )}
-          </>
-        )}
-      </div>
-    </motion.div>
-  )
-}
-
 export function StatsSection() {
-  const containerRef = useRef<HTMLElement>(null)
-  const [activeIndex, setActiveIndex] = useState(0)
-  const total = milestones.length
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"],
-  })
-
-  const progressBar = useSpring(scrollYProgress, {
-    stiffness: 140,
-    damping: 36,
-    restDelta: 0.001,
-  })
-
-  // Atmosphere drifts gently with scroll — no sideways content scrub
-  const mapX = useTransform(scrollYProgress, [0, 1], ["0%", "-12%"])
-  const ridgeX = useTransform(scrollYProgress, [0, 1], ["0%", "-8%"])
-  const farRidgeX = useTransform(scrollYProgress, [0, 1], ["0%", "-4%"])
-  const skyShift = useTransform(scrollYProgress, [0, 1], [0, 24])
-
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    let next = 0
-    for (let i = 0; i < total; i++) {
-      const { start, end } = rangeFor(i, total)
-      if (latest >= start && latest < end) {
-        next = i
-        break
-      }
-      if (latest >= 0.88) next = total - 1
-    }
-    setActiveIndex(next)
-  })
+  const ref = useRef<HTMLElement>(null)
+  const inView = useInView(ref, { once: true, amount: 0.35 })
 
   return (
     <section
       id="stats-section"
-      ref={containerRef}
-      className="relative"
-      style={{ height: `${total * 95 + 40}vh` }}
+      ref={ref}
+      className="relative overflow-hidden bg-zinc-950 py-20 text-white sm:py-24 md:py-28"
     >
-      <div className="sticky top-0 h-[100svh] overflow-hidden">
-        <motion.div
-          className="absolute inset-0"
-          style={{
-            y: skyShift,
-            background: `
-              linear-gradient(
-                180deg,
-                #d9e4ec 0%,
-                #e8eef2 28%,
-                #f0efe9 58%,
-                #e5e0d6 78%,
-                #d8d2c6 100%
-              )
-            `,
-          }}
-        />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.35]"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 60% at 20% 0%, rgba(255,255,255,0.08), transparent 55%), radial-gradient(ellipse 70% 50% at 90% 100%, rgba(255,255,255,0.05), transparent 50%)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.12]"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.45'/%3E%3C/svg%3E")`,
+          backgroundSize: "180px 180px",
+        }}
+      />
 
+      <div className="relative mx-auto max-w-7xl px-5 sm:px-6">
         <motion.div
-          aria-hidden
-          style={{ x: mapX }}
-          className="pointer-events-none absolute inset-0 opacity-[0.14]"
+          initial={{ opacity: 0, y: 20 }}
+          animate={inView ? { opacity: 1, y: 0 } : undefined}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="max-w-2xl"
         >
-          <div
-            className="h-full w-[140%]"
-            style={{
-              backgroundImage: `
-                linear-gradient(rgba(40,50,45,0.09) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(40,50,45,0.09) 1px, transparent 1px)
-              `,
-              backgroundSize: "72px 48px",
-            }}
-          />
+          <p className="text-[11px] font-medium tracking-[0.22em] text-white/45 uppercase sm:text-xs">
+            The road so far
+          </p>
+          <h2 className="mt-3 font-serif text-3xl font-normal text-balance sm:text-4xl md:text-5xl">
+            Numbers that travel with us
+          </h2>
         </motion.div>
 
-        <motion.div
-          aria-hidden
-          style={{ x: farRidgeX }}
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-[38%] opacity-40"
-        >
-          <svg
-            viewBox="0 0 1440 320"
-            preserveAspectRatio="none"
-            className="h-full w-[130%] text-[#b7c0c4]"
-          >
-            <path
-              fill="currentColor"
-              d="M0 320V180L160 120L320 200L480 80L640 160L800 60L960 140L1120 90L1280 170L1440 100V320H0Z"
-            />
-          </svg>
-        </motion.div>
+        <div className="mt-12 grid grid-cols-1 gap-10 border-t border-white/15 pt-10 sm:mt-16 sm:grid-cols-3 sm:gap-0 sm:pt-14 md:mt-20">
+          {stats.map((stat, index) => {
+            const content = (
+              <>
+                <p className="text-[11px] tracking-[0.22em] text-white/45 uppercase sm:text-xs">
+                  {stat.label}
+                </p>
+                <p className="mt-3 font-serif text-6xl leading-none tracking-tight text-white sm:text-7xl md:text-8xl">
+                  <CountUp value={stat.value} suffix={stat.suffix} active={inView} />
+                </p>
+                <p className="mt-4 max-w-[16rem] text-sm leading-relaxed text-white/55 sm:mt-5">
+                  {stat.note}
+                </p>
+                {"href" in stat && stat.href && (
+                  <span className="mt-5 inline-flex items-center gap-1.5 text-sm text-white/80 transition-colors group-hover:text-white">
+                    Follow on Instagram
+                    <ArrowUpRight className="h-3.5 w-3.5" />
+                  </span>
+                )}
+              </>
+            )
 
-        <motion.div
-          aria-hidden
-          style={{ x: ridgeX }}
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-[28%] opacity-55"
-        >
-          <svg
-            viewBox="0 0 1440 280"
-            preserveAspectRatio="none"
-            className="h-full w-[140%] text-[#9aa49a]"
-          >
-            <path
-              fill="currentColor"
-              d="M0 280V160L120 200L280 100L420 180L580 90L740 170L900 70L1060 150L1220 110L1380 190L1440 150V280H0Z"
-            />
-          </svg>
-        </motion.div>
-
-        <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-[42%]"
-          style={{
-            background:
-              "linear-gradient(to top, rgba(232,226,214,0.8) 0%, rgba(232,226,214,0.28) 55%, transparent 100%)",
-          }}
-        />
-
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.16]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E")`,
-            backgroundSize: "180px 180px",
-          }}
-        />
-
-        {/* Stacked milestones — crossfade / rise / soft blur */}
-        <div className="relative z-10 h-full">
-          {milestones.map((milestone, index) => (
-            <MilestoneLayer
-              key={milestone.id}
-              milestone={milestone}
-              index={index}
-              total={total}
-              active={activeIndex === index}
-              scrollYProgress={scrollYProgress}
-            />
-          ))}
-        </div>
-
-        <div className="absolute right-6 bottom-6 left-6 z-20 flex items-center gap-4 sm:right-10 sm:bottom-8 sm:left-10 md:right-16 md:left-16">
-          <div className="h-px flex-1 overflow-hidden bg-foreground/10">
-            <motion.div
-              className="h-full origin-left bg-foreground"
-              style={{ scaleX: progressBar }}
-            />
-          </div>
-          <div className="flex items-center gap-2">
-            {milestones.map((m, i) => (
-              <span
-                key={m.id}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i === activeIndex ? "w-6 bg-foreground" : "w-1.5 bg-foreground/25"
-                }`}
-              />
-            ))}
-          </div>
-          <span className="font-mono text-[10px] tracking-wider text-muted-foreground tabular-nums">
-            {String(activeIndex + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
-          </span>
+            return (
+              <motion.div
+                key={stat.id}
+                initial={{ opacity: 0, y: 28 }}
+                animate={inView ? { opacity: 1, y: 0 } : undefined}
+                transition={{
+                  duration: 0.55,
+                  delay: 0.12 + index * 0.1,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className={
+                  index > 0
+                    ? "sm:border-l sm:border-white/15 sm:pl-8 md:pl-12 lg:pl-14"
+                    : "sm:pr-8 md:pr-12 lg:pr-14"
+                }
+              >
+                {"href" in stat && stat.href ? (
+                  <a
+                    href={stat.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group block outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+                  >
+                    {content}
+                  </a>
+                ) : (
+                  content
+                )}
+              </motion.div>
+            )
+          })}
         </div>
       </div>
     </section>

@@ -3,14 +3,16 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import { AnimatePresence, motion } from "framer-motion"
-import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react"
+import { ArrowUpRight, ChevronLeft, ChevronRight, Plus } from "lucide-react"
+import { DestinationsLibraryDialog } from "@/components/destinations-library-dialog"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 
 const WHATSAPP_URL = "https://wa.me/971588409478"
-const IMG_V = "v6"
-const PHOTO_MS = 4200
-const COUNTRY_MS = 16000
+const IMG_V = "v7"
+const PHOTO_MS = 1800
+const COUNTRY_MS = 5200
+const CHAPTER_MS = 1400
 
 type Destination = {
   id: string
@@ -199,11 +201,17 @@ const src = (path: string) => `${path}?${IMG_V}`
 export function DestinationsSection() {
   const [activeId, setActiveId] = useState(destinations[0].id)
   const [photoIndex, setPhotoIndex] = useState(0)
-  const [paused, setPaused] = useState(false)
+  const [libraryOpen, setLibraryOpen] = useState(false)
   const [loadedPaths, setLoadedPaths] = useState<Set<string>>(() => new Set())
+  const [direction, setDirection] = useState(1)
+  const [chapterOpen, setChapterOpen] = useState(true)
   const stripRef = useRef<HTMLDivElement>(null)
+  const skipInitialChapter = useRef(true)
+  const chapterTimerRef = useRef<number | null>(null)
 
   const active = destinations.find((d) => d.id === activeId) ?? destinations[0]
+  const activeIndex = destinations.findIndex((d) => d.id === activeId)
+  const chapterNo = String(activeIndex + 1).padStart(2, "0")
   const photo = active.images[photoIndex % active.images.length]
   const photoReady = loadedPaths.has(photo)
 
@@ -216,11 +224,13 @@ export function DestinationsSection() {
     })
   }, [])
 
-  useEffect(() => {
-    setPhotoIndex(0)
-  }, [activeId])
+  const openChapter = useCallback(() => {
+    setChapterOpen(true)
+    if (chapterTimerRef.current) window.clearTimeout(chapterTimerRef.current)
+    chapterTimerRef.current = window.setTimeout(() => setChapterOpen(false), CHAPTER_MS)
+  }, [])
 
-  // Prefetch next few frames of active destination
+  // Prefetch frames of active destination
   useEffect(() => {
     active.images.slice(0, 4).forEach((path) => {
       const img = new window.Image()
@@ -230,38 +240,74 @@ export function DestinationsSection() {
     })
   }, [active.images, markLoaded])
 
+  // Never let a slow/missing image freeze the carousel
   useEffect(() => {
-    if (paused || !photoReady) return
+    if (photoReady) return
+    const id = window.setTimeout(() => markLoaded(photo), 1200)
+    return () => window.clearTimeout(id)
+  }, [photo, photoReady, markLoaded])
+
+  // Opening chapter card on first mount, then on each country change
+  useEffect(() => {
+    if (skipInitialChapter.current) {
+      skipInitialChapter.current = false
+      if (chapterTimerRef.current) window.clearTimeout(chapterTimerRef.current)
+      chapterTimerRef.current = window.setTimeout(() => setChapterOpen(false), CHAPTER_MS + 200)
+      return
+    }
+    openChapter()
+  }, [activeId, openChapter])
+
+  useEffect(() => {
+    return () => {
+      if (chapterTimerRef.current) window.clearTimeout(chapterTimerRef.current)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (libraryOpen || chapterOpen) return
     const id = window.setTimeout(() => {
       setPhotoIndex((i) => (i + 1) % active.images.length)
     }, PHOTO_MS)
     return () => window.clearTimeout(id)
-  }, [paused, photoReady, photoIndex, active.images.length])
+  }, [libraryOpen, chapterOpen, photoIndex, active.images.length, activeId])
 
   useEffect(() => {
-    if (paused || !photoReady) return
+    if (libraryOpen || chapterOpen) return
     const id = window.setTimeout(() => {
+      setDirection(1)
       setActiveId((current) => {
         const index = destinations.findIndex((d) => d.id === current)
         return destinations[(index + 1) % destinations.length].id
       })
+      setPhotoIndex(0)
     }, COUNTRY_MS)
     return () => window.clearTimeout(id)
-  }, [paused, photoReady, activeId])
+  }, [libraryOpen, chapterOpen, activeId])
 
   const goCountry = (dir: -1 | 1) => {
+    setDirection(dir)
     const index = destinations.findIndex((d) => d.id === activeId)
     const next = destinations[(index + dir + destinations.length) % destinations.length]
     setActiveId(next.id)
+    setPhotoIndex(0)
   }
 
   const selectCountry = (id: string) => {
+    if (id === activeId) return
+    const from = destinations.findIndex((d) => d.id === activeId)
+    const to = destinations.findIndex((d) => d.id === id)
+    if (to !== -1 && from !== -1) setDirection(to >= from ? 1 : -1)
     setActiveId(id)
+    setPhotoIndex(0)
     const el = stripRef.current
     if (!el) return
     const btn = el.querySelector<HTMLElement>(`[data-dest="${id}"]`)
     btn?.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" })
   }
+
+  const slideEase = [0.22, 1, 0.36, 1] as const
+  const chapterEase = [0.65, 0, 0.35, 1] as const
 
   return (
     <section id="destinations" className="relative overflow-hidden bg-zinc-950 py-16 text-white sm:py-20 md:py-24">
@@ -296,8 +342,6 @@ export function DestinationsSection() {
           role="tablist"
           aria-label="Destinations"
           className="mb-8 flex gap-1 overflow-x-auto border-b border-white/15 pb-px md:mb-10"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
         >
           {destinations.map((dest) => {
             const isActive = dest.id === activeId
@@ -324,71 +368,147 @@ export function DestinationsSection() {
               </button>
             )
           })}
-          <a
-            href={WHATSAPP_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="relative shrink-0 px-3 py-3 text-sm text-white/45 italic transition-colors hover:text-white/80 sm:px-4 md:px-5 md:text-base"
+          <button
+            type="button"
+            aria-label="Open destination library"
+            title="More destinations"
+            onClick={() => setLibraryOpen(true)}
+            className="relative flex shrink-0 items-center justify-center px-3 py-3 text-white/45 transition-colors hover:text-white sm:px-4 md:px-5"
           >
-            many more
-          </a>
+            <Plus className="h-5 w-5" strokeWidth={2} />
+          </button>
         </div>
       </div>
 
       {/* Cinematic stage */}
-      <div
-        className="relative mx-auto max-w-7xl px-5 sm:px-6"
-        onMouseEnter={() => setPaused(true)}
-        onMouseLeave={() => setPaused(false)}
-        onFocusCapture={() => setPaused(true)}
-        onBlurCapture={(e) => {
-          if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPaused(false)
-        }}
-      >
+      <div className="relative mx-auto max-w-7xl px-5 sm:px-6">
         <div className="relative aspect-[4/5] overflow-hidden sm:aspect-[16/10] md:aspect-[21/10] md:min-h-[520px]">
           {!photoReady && <Skeleton className="absolute inset-0 z-[1] h-full w-full rounded-none bg-zinc-800" />}
 
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="sync" custom={direction}>
             <motion.div
               key={`${active.id}-${photo}`}
-              initial={{ opacity: 0, scale: 1.04 }}
+              custom={direction}
+              initial={{ opacity: 0, scale: 1.08 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute inset-0"
+              exit={{ opacity: 0, scale: 1.04 }}
+              transition={{ duration: 0.7, ease: slideEase }}
+              className="absolute inset-0 will-change-transform"
             >
-              <Image
-                src={src(photo)}
-                alt={`${active.name} destination`}
-                fill
-                priority
-                sizes="100vw"
-                className={cn("object-cover", photoReady ? "opacity-100" : "opacity-0")}
-                onLoad={() => markLoaded(photo)}
-                onError={() => markLoaded(photo)}
-              />
+              <motion.div
+                key={`ken-${active.id}-${photo}`}
+                className="absolute inset-0"
+                initial={{ scale: 1 }}
+                animate={{ scale: 1.06 }}
+                transition={{ duration: Math.max(PHOTO_MS, COUNTRY_MS) / 1000, ease: "linear" }}
+              >
+                <Image
+                  src={src(photo)}
+                  alt={`${active.name} destination`}
+                  fill
+                  priority
+                  sizes="100vw"
+                  className={cn("object-cover", photoReady ? "opacity-100" : "opacity-0")}
+                  onLoad={() => markLoaded(photo)}
+                  onError={() => markLoaded(photo)}
+                />
+              </motion.div>
             </motion.div>
           </AnimatePresence>
 
-          <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/20" />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent" />
+          <div className="pointer-events-none absolute inset-0 z-[3] bg-gradient-to-t from-black/85 via-black/25 to-black/20" />
+          <div className="pointer-events-none absolute inset-0 z-[3] bg-gradient-to-r from-black/50 via-transparent to-transparent" />
 
-          <div className="absolute inset-0 flex flex-col justify-end p-5 sm:p-8 md:p-10 lg:p-12">
-            <AnimatePresence mode="wait">
+          {/* Chapter title card */}
+          <AnimatePresence>
+            {chapterOpen && (
+              <motion.div
+                key={`chapter-${active.id}`}
+                initial={{
+                  clipPath: direction >= 0 ? "inset(0 0 100% 0)" : "inset(100% 0 0 0)",
+                }}
+                animate={{ clipPath: "inset(0 0 0% 0%)" }}
+                exit={{
+                  clipPath: direction >= 0 ? "inset(100% 0 0 0)" : "inset(0 0 100% 0)",
+                  transition: { duration: 0.7, ease: chapterEase },
+                }}
+                transition={{ duration: 0.55, ease: chapterEase }}
+                className="absolute inset-0 z-[20] flex items-center justify-center bg-zinc-950"
+              >
+                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.06),transparent_65%)]" />
+                <div className="relative mx-auto flex w-full max-w-xl flex-col items-center px-6 text-center">
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ delay: 0.15, duration: 0.45, ease: slideEase }}
+                    className="mb-6 h-px w-16 origin-center bg-white/35 sm:mb-8 sm:w-24"
+                  />
+                  <motion.p
+                    initial={{ opacity: 0, letterSpacing: "0.45em", y: 8 }}
+                    animate={{ opacity: 1, letterSpacing: "0.28em", y: 0 }}
+                    transition={{ delay: 0.12, duration: 0.5, ease: slideEase }}
+                    className="text-[10px] font-medium text-white/50 uppercase sm:text-xs"
+                  >
+                    Chapter {chapterNo}
+                  </motion.p>
+                  <div className="mt-3 overflow-hidden sm:mt-4">
+                    <motion.h3
+                      initial={{ y: "115%" }}
+                      animate={{ y: "0%" }}
+                      transition={{ delay: 0.2, duration: 0.65, ease: slideEase }}
+                      className="font-serif text-5xl leading-none font-normal text-white sm:text-6xl md:text-7xl lg:text-8xl"
+                    >
+                      {active.name}
+                    </motion.h3>
+                  </div>
+                  <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.38, duration: 0.45, ease: slideEase }}
+                    className="mt-4 max-w-sm text-sm text-white/55 sm:mt-5 sm:text-base"
+                  >
+                    {active.season}
+                  </motion.p>
+                  <motion.div
+                    initial={{ scaleX: 0 }}
+                    animate={{ scaleX: 1 }}
+                    transition={{ delay: 0.35, duration: 0.45, ease: slideEase }}
+                    className="mt-6 h-px w-16 origin-center bg-white/35 sm:mt-8 sm:w-24"
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <div
+            className={cn(
+              "absolute inset-0 z-[4] flex flex-col justify-end p-5 transition-opacity duration-500 sm:p-8 md:p-10 lg:p-12",
+              chapterOpen ? "pointer-events-none opacity-0" : "opacity-100",
+            )}
+          >
+            <AnimatePresence mode="wait" custom={direction}>
               <motion.div
                 key={active.id}
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.45 }}
+                custom={direction}
+                initial={{ opacity: 0, y: 28 }}
+                animate={{ opacity: chapterOpen ? 0 : 1, y: chapterOpen ? 28 : 0 }}
+                exit={{ opacity: 0, y: -16 }}
+                transition={{ duration: 0.55, ease: slideEase, delay: chapterOpen ? 0 : 0.15 }}
                 className="max-w-2xl"
               >
                 <p className="mb-3 text-[11px] font-medium tracking-[0.22em] text-white/65 uppercase sm:text-xs">
-                  {active.season} · {active.duration}
+                  Chapter {chapterNo} · {active.season} · {active.duration}
                 </p>
-                <h3 className="font-serif text-4xl leading-[0.95] font-normal text-white sm:text-5xl md:text-6xl lg:text-7xl">
-                  {active.name}
-                </h3>
+                <div className="overflow-hidden">
+                  <motion.h3
+                    initial={{ y: "110%" }}
+                    animate={{ y: chapterOpen ? "110%" : "0%" }}
+                    transition={{ delay: 0.05, duration: 0.65, ease: slideEase }}
+                    className="font-serif text-4xl leading-[0.95] font-normal text-white sm:text-5xl md:text-6xl lg:text-7xl"
+                  >
+                    {active.name}
+                  </motion.h3>
+                </div>
                 <p className="mt-3 max-w-md text-sm leading-relaxed text-white/80 sm:mt-4 sm:text-base md:text-lg">
                   {active.line}
                 </p>
@@ -457,6 +577,7 @@ export function DestinationsSection() {
                   sizes="200px"
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
                   onLoad={() => markLoaded(thumb)}
+                  onError={() => markLoaded(thumb)}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 <span className="absolute inset-x-0 bottom-0 p-3 text-left font-serif text-lg text-white sm:text-xl">
@@ -465,8 +586,25 @@ export function DestinationsSection() {
               </button>
             )
           })}
+          <button
+            type="button"
+            aria-label="Open destination library"
+            onClick={() => setLibraryOpen(true)}
+            className="group relative flex h-28 w-[42vw] shrink-0 flex-col items-center justify-center gap-2 overflow-hidden border border-dashed border-white/25 bg-white/[0.04] transition-all duration-300 hover:border-white/50 hover:bg-white/[0.08] sm:h-32 sm:w-44 md:w-48"
+          >
+            <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/30 text-white transition-transform duration-300 group-hover:scale-110">
+              <Plus className="h-5 w-5" strokeWidth={2} />
+            </span>
+            <span className="font-serif text-base text-white/80 sm:text-lg">More places</span>
+          </button>
         </div>
       </div>
+
+      <DestinationsLibraryDialog
+        open={libraryOpen}
+        onOpenChange={setLibraryOpen}
+        onSelectFeatured={(id) => selectCountry(id)}
+      />
     </section>
   )
 }

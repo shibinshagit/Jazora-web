@@ -2,6 +2,7 @@
 
 import { Compass, Users, Plane } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
+import { MissionBanner } from "@/components/growth-flight-scene"
 
 const services = [
   {
@@ -21,7 +22,7 @@ const services = [
   },
 ]
 
-function AnimatedIcon({ Icon, delay = 0 }: { Icon: any; delay?: number }) {
+function AnimatedIcon({ Icon }: { Icon: React.ComponentType<{ className?: string; strokeWidth?: number; style?: React.CSSProperties }> }) {
   const [isVisible, setIsVisible] = useState(false)
   const iconRef = useRef<HTMLDivElement>(null)
 
@@ -57,30 +58,10 @@ function AnimatedIcon({ Icon, delay = 0 }: { Icon: any; delay?: number }) {
 }
 
 export function ServicesSection() {
-  const [isVisible, setIsVisible] = useState(false)
-  const sectionRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true)
-        }
-      },
-      { threshold: 0.2 },
-    )
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current)
-    }
-
-    return () => observer.disconnect()
-  }, [])
-
   return (
-    <section id="how-it-works" className="py-32 px-6 pb-24 relative overflow-hidden">
-      <div className="absolute top-0 left-0 right-0 flex justify-center pointer-events-none z-0">
-        <span className="font-bold text-center text-[18vw] sm:text-[16vw] md:text-[14vw] lg:text-[12vw] leading-none tracking-tighter text-zinc-100 whitespace-nowrap">
+    <section id="how-it-works" className="relative overflow-hidden px-6 py-32 pb-24">
+      <div className="pointer-events-none absolute top-0 right-0 left-0 z-0 flex justify-center">
+        <span className="text-center text-[18vw] leading-none font-bold tracking-tighter whitespace-nowrap text-zinc-100 sm:text-[16vw] md:text-[14vw] lg:text-[12vw]">
           WORLD
         </span>
       </div>
@@ -105,61 +86,27 @@ export function ServicesSection() {
         }
       `}</style>
 
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div ref={sectionRef} className="relative px-6 lg:px-8 py-16 lg:py-10 mb-32 overflow-hidden rounded-3xl">
-          {/* Background image that spans full width */}
-          <div className="absolute inset-0 w-full h-full">
-            <img
-              src="/images/7aecbceb-cbd3-4cbd-901c-dd0125d41525.png"
-              alt="Coastal landscape on an Jazora departure"
-              className={`w-full h-full object-cover transition-transform duration-1000 ease-out ${
-                isVisible ? "scale-100" : "scale-110"
-              }`}
-            />
-            {/* Overlay for better text readability */}
-            <div className="absolute inset-0 bg-black/20" />
-          </div>
+      <div className="relative z-10 mx-auto max-w-7xl">
+        <MissionBanner />
 
-          {/* Text content on top */}
-          <div className="relative z-10 grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <div className="order-1 lg:order-2">
-              <p className="text-sm uppercase tracking-[0.2em] text-white/80 font-medium mb-4">Our mission</p>
-              <h2 className="font-sans md:text-4xl lg:text-5xl font-medium text-white text-balance mb-8 text-5xl">
-                We operate the journey, not just the booking
-              </h2>
-              <div className="space-y-6 text-white/90 leading-relaxed">
-                <p>
-                  Jazora plans and leads international trips. A departure is a route, a team, and a schedule we run —
-                  from the first flight to the transfer home.
-                </p>
-                <p>
-                  Small groups and private journeys share the same standard: vetted stays, local guides, and a desk
-                  that answers while you are abroad.
-                </p>
-              </div>
-              <div className="mt-10"></div>
-            </div>
-          </div>
-        </div>
-
-        <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-5xl font-normal mb-6 text-balance font-serif">What a departure includes</h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+        <div className="mb-20 text-center">
+          <h2 className="mb-6 font-serif text-4xl font-normal text-balance md:text-5xl">What a departure includes</h2>
+          <p className="mx-auto max-w-2xl leading-relaxed text-muted-foreground">
             One operator for the whole trip: the route, the reservations, and the people waiting when you land.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid gap-8 md:grid-cols-3">
           {services.map((service, index) => (
             <div
               key={index}
-              className="group p-8 rounded-3xl hover:bg-zinc-50 transition-colors duration-300 text-center"
+              className="group rounded-3xl p-8 text-center transition-colors duration-300 hover:bg-zinc-50"
             >
               <div className="mb-6 flex justify-center">
-                <AnimatedIcon Icon={service.icon} delay={index * 0.2} />
+                <AnimatedIcon Icon={service.icon} />
               </div>
-              <h3 className="text-xl font-medium mb-3 text-foreground">{service.title}</h3>
-              <p className="text-muted-foreground leading-relaxed text-sm">{service.description}</p>
+              <h3 className="mb-3 text-xl font-medium text-foreground">{service.title}</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">{service.description}</p>
             </div>
           ))}
         </div>

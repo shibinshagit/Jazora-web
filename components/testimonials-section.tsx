@@ -1,52 +1,46 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Image from "next/image"
 import { AnimatePresence, motion } from "framer-motion"
 import { ChevronLeft, ChevronRight, User } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const stories = [
   {
-    quote: "Jazora handled the trains, the ryokan, and a guide who actually knew the back streets of Kyoto.",
-    name: "Marie Dupont",
-    trip: "Japan in Spring",
-    year: "2025",
-    image: "/trips/georgia/01.jpg?v2",
+    quote:
+      "From a close friend to my trusted travel advisor — we've travelled together from mountains to the sea, snowy escapes to endless road trips. Now I know I'm in the safest hands for every journey ahead.",
+    name: "Flaimy Francis",
+    image: "/notes/flaimy-francis.jpg",
   },
   {
-    quote: "I never had to chase a transfer. Someone from the trip was waiting every time we landed.",
-    name: "Thomas Martin",
-    trip: "Georgia Highlands",
-    year: "2025",
-    image: "/trips/georgia/04.jpg?v2",
+    quote:
+      "Some journeys are not measured by the miles we travel, but by the memories we create, the laughter we share, and the love we carry in our hearts. Thank you, Jazeera, for inspiring these beautiful thoughts and for giving us a journey filled with wonderful moments and precious memories.",
+    name: "Jessy Roy",
+    image: "/notes/jessy-roy.jpg",
   },
   {
-    quote: "The route felt considered, and the local team knew when the weather was about to turn.",
-    name: "Sophie Bernard",
-    trip: "Armenia Heritage",
-    year: "2026",
-    image: "/trips/armenia/07.jpg?v2",
+    quote:
+      "From one destination to another, we collected stories, laughter, cra that last forever moments & memories.",
+    name: "Sajna Afsal",
+    image: "/notes/sajna-afsal.jpg",
   },
   {
-    quote: "Eight days on the coast, and the only thing I booked myself was dinner on the free evening.",
-    name: "Lucas Petit",
-    trip: "Amalfi Coast",
-    year: "2025",
-    image: "/trips/azerbaijan/03.jpg?v2",
+    quote:
+      "From being part of her very first ladies' trip to sharing 10 unforgettable international journeys, what a beautiful journey it has been! What started as a trip became a special friendship filled with memories, laughter, and endless adventures. Here's to many more!",
+    name: "Sheeba Nazer",
+    image: "/notes/sheeba-nazer.jpg",
   },
   {
-    quote: "Private where it mattered, guided where we would have gotten lost. Exactly the pace we wanted.",
-    name: "Emma Laurent",
-    trip: "Caucasus Triangle",
-    year: "2026",
-    image: "/trips/armenia/19.jpg?v2",
+    quote:
+      "The world is full of beautiful places, but the sweetest memories are made with the right people and the perfect journey! Some journeys take us to beautiful destinations, while some create beautiful memories that stay in our hearts forever. With excitement in our hearts and dreams in our eyes, we begin another wonderful international journey with Jazeera!",
+    name: "Simna Sadick",
+    image: "/notes/simna-sadick.jpg",
   },
   {
-    quote: "Rail passes, hotels, and the boat were already in the itinerary. We just showed up.",
-    name: "Antoine Rousseau",
-    trip: "Swiss Lakes",
-    year: "2025",
-    image: "/trips/azerbaijan/13.jpg?v2",
+    quote:
+      "My first ladies' trip with Jazeera to Georgia — a journey that filled my heart with laughter, love, and memories I'll hold onto forever. Some moments simply become a part of you.",
+    name: "Starly Shibu",
+    image: "/notes/starly-shibu.jpg",
   },
 ]
 
@@ -103,19 +97,23 @@ export function TestimonialsSection() {
           <div className="flex min-h-[280px] flex-col items-center justify-center text-center sm:min-h-[300px] md:min-h-[320px]">
             <AnimatePresence mode="wait">
               <motion.blockquote
-                key={story.name + story.trip}
+                key={story.name}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -12 }}
                 transition={{ duration: 0.4 }}
                 className="flex max-w-3xl flex-col items-center"
               >
-                <Avatar className="mb-6 size-16 ring-1 ring-border sm:mb-8 sm:size-20">
-                  <AvatarImage src={story.image} alt={story.name} className="object-cover" />
-                  <AvatarFallback className="bg-zinc-100 text-muted-foreground">
-                    <User className="size-7 sm:size-8" strokeWidth={1.5} />
-                  </AvatarFallback>
-                </Avatar>
+                <div className="relative mb-6 size-16 overflow-hidden rounded-full ring-1 ring-border sm:mb-8 sm:size-20">
+                  <Image
+                    src={story.image}
+                    alt={story.name}
+                    fill
+                    sizes="80px"
+                    className="object-cover"
+                    priority={index === 0}
+                  />
+                </div>
 
                 <p className="font-serif text-2xl leading-snug text-foreground text-balance sm:text-3xl md:text-4xl md:leading-snug">
                   &ldquo;{story.quote}&rdquo;
@@ -125,11 +123,6 @@ export function TestimonialsSection() {
                     <span className="flex items-center gap-2 text-sm font-medium text-foreground">
                       <User className="size-3.5 text-muted-foreground" strokeWidth={1.75} />
                       {story.name}
-                    </span>
-                    <span className="mt-1 block text-sm text-muted-foreground">
-                      {story.trip}
-                      <span className="mx-2 text-border">·</span>
-                      {story.year}
                     </span>
                   </cite>
                 </footer>
