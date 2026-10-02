@@ -42,6 +42,12 @@ const stories = [
     name: "Starly Shibu",
     image: "/notes/starly-shibu.jpg",
   },
+  {
+    quote:
+      "A trip full of emotions and memories. ❤️ Every trip gives us a new story, but this one made our friendship even stronger. 🥹🫶",
+    name: "Shaeema",
+    image: "/notes/shaeema.jpg",
+  },
 ]
 
 const ROTATE_MS = 7000

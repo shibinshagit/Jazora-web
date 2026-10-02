@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react"
 import { motion, useInView } from "framer-motion"
 import { ArrowUpRight } from "lucide-react"
 
-const INSTAGRAM_URL = "https://www.instagram.com/jazoraholidays?stkn=ZTVqdmpkNTF2bzU4"
+const INSTAGRAM_URL = "https://www.instagram.com/mintsulaimani"
 
 const stats = [
   {
