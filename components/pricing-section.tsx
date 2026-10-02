@@ -6,6 +6,17 @@ import { TripCard } from "./trip-card"
 
 const trips = [
   {
+    name: "Malaysia",
+    location: "Kuala Lumpur to the islands",
+    duration: "3–4 days",
+    season: "Coming season",
+    image: "/trips/upcoming/malaysia.jpg",
+    type: "Next departure",
+    highlights: ["Petronas Towers", "Street food trails", "Island evenings"],
+    includes: ["Flights", "Guide", "Hotels"],
+    popular: true,
+  },
+  {
     name: "Vietnam",
     location: "Ha Long Bay to Hanoi",
     duration: "4–5 days",
