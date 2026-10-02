@@ -24,10 +24,11 @@ const stats = [
   },
   {
     id: "community",
-    value: 2,
+    value: 3,
     suffix: "K+",
     label: "Community",
     note: "Travellers who have walked the routes with us",
+    href: "https://www.instagram.com/whs.uae/",
   },
 ] as const
 
