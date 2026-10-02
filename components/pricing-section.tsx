@@ -8,7 +8,7 @@ const trips = [
   {
     name: "Vietnam",
     location: "Ha Long Bay to Hanoi",
-    duration: "8–10 days",
+    duration: "4–5 days",
     season: "Coming season",
     image: "/trips/upcoming/vietnam.jpg",
     type: "Next departure",
@@ -19,7 +19,7 @@ const trips = [
   {
     name: "Thailand",
     location: "Bangkok to the islands",
-    duration: "7–9 days",
+    duration: "4–5 days",
     season: "Coming season",
     image: "/trips/upcoming/thailand.jpg",
     type: "Next departure",
@@ -30,7 +30,7 @@ const trips = [
   {
     name: "Jordan",
     location: "Amman to Petra",
-    duration: "6–8 days",
+    duration: "3–4 days",
     season: "Coming season",
     image: "/trips/upcoming/jordan.jpg",
     type: "Next departure",
@@ -40,7 +40,7 @@ const trips = [
   {
     name: "Kyrgyzstan",
     location: "Issyk-Kul to Song-Kul",
-    duration: "7–10 days",
+    duration: "3–4 days",
     season: "Coming soon",
     image: "/trips/kyrgyzstan/web/03.jpg",
     type: "Coming soon",
@@ -51,7 +51,7 @@ const trips = [
   {
     name: "Uzbekistan",
     location: "Samarkand to Bukhara",
-    duration: "7–10 days",
+    duration: "3–4 days",
     season: "Coming soon",
     image: "/trips/uzbekistan/web/01.jpg",
     type: "Coming soon",

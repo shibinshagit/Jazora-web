@@ -11,8 +11,8 @@ const trips = [
   },
   {
     src: "/gallery/web/IMG_0563.jpg",
-    place: "Iris Hotel",
-    note: "Lobby frame, Baku nights",
+    place: "Kyrgyzstan",
+    note: "Iris Hotel, mountain stay",
   },
   {
     src: "/gallery/web/IMG_2431.jpg",

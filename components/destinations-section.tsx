@@ -497,7 +497,7 @@ export function DestinationsSection() {
                 className="max-w-2xl"
               >
                 <p className="mb-3 text-[11px] font-medium tracking-[0.22em] text-white/65 uppercase sm:text-xs">
-                  Chapter {chapterNo} · {active.season} · {active.duration}
+                  Chapter {chapterNo} · {active.season}
                 </p>
                 <div className="overflow-hidden">
                   <motion.h3
