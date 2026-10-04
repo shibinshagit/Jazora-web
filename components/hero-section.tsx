@@ -176,13 +176,14 @@ export function HeroSection() {
               )}
             >
               <div
-                className="absolute overflow-hidden"
+                className="absolute overflow-hidden isolate [contain:paint]"
                 style={{
                   left: "3.12%",
                   top: "1.05%",
                   width: "93.76%",
                   height: "98.31%",
                   borderRadius: "14.4% / 6.7%",
+                  clipPath: "inset(0 round 14.4% / 6.7%)",
                 }}
               >
                 {isVisible ? (

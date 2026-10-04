@@ -96,3 +96,29 @@ html {
     @apply bg-background text-foreground;
   }
 }
+
+@keyframes phone-photo-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes malaysia-slide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.phone-photo-progress {
+  animation: phone-photo-progress 3400ms linear forwards;
+}
+
+.malaysia-marquee {
+  animation: malaysia-slide 28s linear infinite;
+}

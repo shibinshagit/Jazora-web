@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { Header } from "@/components/header"
 import { HeroSection } from "@/components/hero-section"
+import { NextDepartureSection } from "@/components/next-departure-section"
 import { StatsSection } from "@/components/stats-section"
 import { DestinationsSection } from "@/components/destinations-section"
 import { ManifestoSection } from "@/components/manifesto-section"
@@ -36,6 +37,7 @@ export default function Home() {
         <main className="min-h-screen bg-background">
           <Header />
           <HeroSection />
+          <NextDepartureSection />
           <PricingSection />
           <DestinationsSection />
           <ManifestoSection />

@@ -7,14 +7,14 @@ import { TripCard } from "./trip-card"
 const trips = [
   {
     name: "Malaysia",
-    location: "Kuala Lumpur to the islands",
-    duration: "3–4 days",
-    season: "Coming season",
+    location: "Kuala Lumpur, Putrajaya & Genting",
+    duration: "4 days",
+    season: "18 Nov 2026",
     image: "/trips/upcoming/malaysia.jpg",
     type: "Next departure",
     highlights: ["Petronas Towers", "Street food trails", "Island evenings"],
     includes: ["Flights", "Guide", "Hotels"],
-    popular: true,
+    comingSoon: true,
   },
   {
     name: "Vietnam",
@@ -22,10 +22,10 @@ const trips = [
     duration: "4–5 days",
     season: "Coming season",
     image: "/trips/upcoming/vietnam.jpg",
-    type: "Next departure",
+    type: "Coming soon",
     highlights: ["Ha Long Bay", "Old Quarter nights", "Local kitchens"],
     includes: ["Flights", "Guide", "Hotels"],
-    popular: true,
+    comingSoon: true,
   },
   {
     name: "Thailand",
@@ -33,10 +33,10 @@ const trips = [
     duration: "4–5 days",
     season: "Coming season",
     image: "/trips/upcoming/thailand.jpg",
-    type: "Next departure",
+    type: "Coming soon",
     highlights: ["Temple mornings", "Long-tail boats", "Street food trails"],
     includes: ["Flights", "Guide", "Hotels"],
-    popular: true,
+    comingSoon: true,
   },
   {
     name: "Jordan",
@@ -44,9 +44,10 @@ const trips = [
     duration: "3–4 days",
     season: "Coming season",
     image: "/trips/upcoming/jordan.jpg",
-    type: "Next departure",
+    type: "Coming soon",
     highlights: ["Petra at dawn", "Wadi Rum nights", "Dead Sea float"],
     includes: ["Flights", "Guide", "Hotels"],
+    comingSoon: true,
   },
   {
     name: "Kyrgyzstan",
@@ -142,23 +143,20 @@ export function PricingSection() {
             </button>
           </div>
         </div>
-      </div>
 
-      <div className="relative z-10">
         <div
           ref={scrollerRef}
-          className="flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain px-5 pb-3 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-5 sm:px-6 md:gap-6 [&::-webkit-scrollbar]:hidden"
+          className="flex snap-x snap-mandatory gap-4 overflow-x-auto overscroll-x-contain pb-3 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-5 md:gap-6 [&::-webkit-scrollbar]:hidden"
         >
           {trips.map((trip) => (
             <div
               key={trip.name}
               data-trip-card
-              className="group w-[min(82vw,320px)] shrink-0 snap-center sm:w-[min(62vw,350px)] sm:snap-start lg:w-[360px]"
+              className="group w-[min(82vw,320px)] shrink-0 snap-start sm:w-[min(62vw,350px)] lg:w-[360px]"
             >
               <TripCard {...trip} />
             </div>
           ))}
-          <div className="w-1 shrink-0 sm:w-2" aria-hidden />
         </div>
 
         <p className="mt-5 text-center text-xs text-muted-foreground md:hidden">Swipe to see more departures</p>
