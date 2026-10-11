@@ -3,103 +3,126 @@
 import Image from "next/image"
 import { ArrowUpRight } from "lucide-react"
 import { DepartureCountdown } from "@/components/departure-countdown"
-import { malaysiaBookUrl, malaysiaDays, malaysiaPhotos, malaysiaTrip } from "@/lib/malaysia-departure"
-
-const dayTones = ["bg-[#f4f1ea]", "bg-[#e7eee8]", "bg-[#e8eef2]", "bg-[#efe9e2]"]
+import { malaysiaBookUrl, malaysiaPhotos, malaysiaTrip } from "@/lib/malaysia-departure"
 
 export function NextDepartureSection() {
   const loop = [...malaysiaPhotos, ...malaysiaPhotos]
+  const soldOut = malaysiaTrip.booked >= malaysiaTrip.groupSize
   const remaining = malaysiaTrip.groupSize - malaysiaTrip.booked
-  const fill = (malaysiaTrip.booked / malaysiaTrip.groupSize) * 100
 
   return (
-    <section id="next-departure" className="relative overflow-hidden bg-background py-14 sm:py-16 md:py-20">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-24 -left-16 h-72 w-72 rounded-full bg-[#e7eee8]/80 blur-2xl"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-10 bottom-0 h-80 w-80 rounded-full bg-[#e8eef2]/90 blur-2xl"
-      />
-
-      <div className="relative mx-auto grid max-w-7xl items-stretch gap-8 px-5 sm:px-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-10">
-        <div className="flex flex-col rounded-[1.75rem] bg-white p-5 shadow-[0_18px_50px_-28px_rgba(0,0,0,0.35)] ring-1 ring-black/[0.05] sm:p-7">
-          <p className="w-fit rounded-full bg-[#f4f1ea] px-2.5 py-1 text-[11px] font-medium tracking-[0.08em] text-zinc-600">
-            Next departure
-          </p>
-
-          <h2 className="mt-4 font-serif text-4xl leading-[0.9] text-zinc-950 sm:text-5xl">{malaysiaTrip.name}</h2>
-          <p className="mt-2 text-sm text-zinc-500 sm:text-base">{malaysiaTrip.dateLabel}</p>
-          <p className="mt-3 max-w-sm text-sm leading-relaxed text-zinc-600">
-            Four days from Sharjah. A small group, one desk, the city and the highlands.
-          </p>
-
-          <div className="mt-6">
-            <DepartureCountdown targetIso={malaysiaTrip.departsAt} />
-          </div>
-
-          <div className="mt-5 flex flex-wrap gap-2">
-            <span className="rounded-full bg-[#e7eee8] px-3 py-1.5 text-xs font-medium text-zinc-800">
-              {malaysiaTrip.duration}
-            </span>
-            <span className="rounded-full bg-[#e8eef2] px-3 py-1.5 text-xs font-medium text-zinc-800">
-              {malaysiaTrip.from}
-            </span>
-          </div>
-
-          <div className="mt-5 rounded-2xl bg-[#e5ebe6] px-4 py-3.5">
-            <div className="flex items-center justify-between text-sm">
-              <p className="font-medium text-zinc-900">
-                {malaysiaTrip.booked}
-                <span className="font-normal text-zinc-500"> / {malaysiaTrip.groupSize} seats</span>
-              </p>
-              <p className="text-xs font-medium text-emerald-700">{remaining} left</p>
-            </div>
+    <section id="next-departure" className="relative overflow-hidden bg-zinc-100 py-12 sm:py-16 md:py-20">
+      <div className="relative mx-auto grid max-w-7xl items-stretch gap-4 px-4 sm:gap-5 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:gap-5">
+        <div className="relative flex flex-col justify-between overflow-hidden rounded-[1.5rem] bg-zinc-950 p-6 text-white sm:p-8">
+          {soldOut ? (
             <div
-              className="mt-2.5 h-2 overflow-hidden rounded-full bg-white/80"
-              role="progressbar"
-              aria-valuenow={malaysiaTrip.booked}
-              aria-valuemin={0}
-              aria-valuemax={malaysiaTrip.groupSize}
-              aria-label={`${malaysiaTrip.booked} of ${malaysiaTrip.groupSize} seats taken`}
+              aria-hidden
+              className="pointer-events-none absolute top-0 right-0 z-20 h-28 w-28 overflow-hidden rounded-tr-[1.5rem]"
             >
-              <div className="h-full rounded-full bg-emerald-500" style={{ width: `${fill}%` }} />
+              <div className="absolute top-[1.7rem] -right-[2.35rem] w-[9.5rem] rotate-45 bg-white py-1.5 text-center shadow-[0_1px_4px_rgba(0,0,0,0.2)]">
+                <span className="block text-[10px] font-bold tracking-[0.2em] text-zinc-950 uppercase">
+                  Sold out
+                </span>
+              </div>
             </div>
+          ) : null}
+          <div>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-[11px] font-medium tracking-[0.2em] text-white/45 uppercase">
+                Next departure
+              </span>
+            </div>
+
+            <h2 className="mt-4 font-serif text-[2.75rem] leading-[0.92] tracking-tight sm:text-5xl md:text-[3.5rem]">
+              {malaysiaTrip.name}
+            </h2>
+            <p className="mt-3 text-sm text-white/55 sm:text-base">{malaysiaTrip.dateLabel}</p>
+            <p className="mt-3 max-w-md text-sm leading-relaxed text-white/65">
+              Four days from Sharjah. A small group, one desk, the city and the highlands.
+            </p>
+
+            <div className="mt-7">
+              <p className="mb-2.5 text-[11px] font-medium tracking-[0.16em] text-white/40 uppercase">Departs in</p>
+              <DepartureCountdown targetIso={malaysiaTrip.departsAt} variant="panel" />
+            </div>
+
+            <div className="mt-5 grid grid-cols-2 gap-3 border-y border-white/10 py-4 text-sm">
+              <div>
+                <p className="text-[10px] tracking-[0.14em] text-white/35 uppercase">Duration</p>
+                <p className="mt-1 text-white/90">{malaysiaTrip.duration}</p>
+              </div>
+              <div>
+                <p className="text-[10px] tracking-[0.14em] text-white/35 uppercase">Route</p>
+                <p className="mt-1 text-white/90">{malaysiaTrip.from}</p>
+              </div>
+            </div>
+
+            {soldOut ? (
+              <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.04] p-4 sm:p-5">
+                <p className="font-serif text-xl leading-snug text-white sm:text-[1.35rem]">
+                  Thank you — this group is full
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-white/55">
+                  All {malaysiaTrip.groupSize} seats are taken. Browse upcoming trips and reserve your place early.
+                </p>
+                <a
+                  href="#pricing"
+                  className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-medium text-zinc-950 transition-opacity hover:opacity-90 sm:w-auto"
+                >
+                  Book an upcoming trip
+                  <ArrowUpRight className="h-4 w-4" />
+                </a>
+              </div>
+            ) : (
+              <div className="mt-5">
+                <div className="flex items-end justify-between gap-3">
+                  <p className="font-serif text-3xl tabular-nums text-white">
+                    {malaysiaTrip.booked}
+                    <span className="text-lg text-white/40">/{malaysiaTrip.groupSize}</span>
+                  </p>
+                  <p className="pb-1 text-xs text-white/50">{remaining} seats left</p>
+                </div>
+                <div
+                  className="mt-3 h-1 overflow-hidden rounded-full bg-white/15"
+                  role="progressbar"
+                  aria-valuenow={malaysiaTrip.booked}
+                  aria-valuemin={0}
+                  aria-valuemax={malaysiaTrip.groupSize}
+                >
+                  <div
+                    className="h-full rounded-full bg-white"
+                    style={{ width: `${(malaysiaTrip.booked / malaysiaTrip.groupSize) * 100}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
           </div>
 
-          <ol className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {malaysiaDays.map((item, i) => (
-              <li key={item.day} className={`rounded-2xl px-3.5 py-3 ring-1 ring-black/[0.04] ${dayTones[i]}`}>
-                <p className="text-[10px] font-medium tracking-[0.16em] text-zinc-400 uppercase">Day {item.day}</p>
-                <p className="mt-1 font-serif text-[0.95rem] leading-snug text-zinc-950">{item.title}</p>
-                <p className="mt-0.5 text-xs leading-relaxed text-zinc-500">{item.line}</p>
-              </li>
-            ))}
-          </ol>
-
-          <a
-            href={malaysiaBookUrl()}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-zinc-950 py-3.5 text-sm font-medium text-white transition-opacity hover:opacity-90 sm:w-auto sm:px-7"
-          >
-            Book this departure
-            <ArrowUpRight className="h-4 w-4" />
-          </a>
+          {!soldOut ? (
+            <a
+              href={malaysiaBookUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full bg-white py-3.5 text-sm font-medium text-zinc-950 transition-opacity hover:opacity-90"
+            >
+              Book this departure
+              <ArrowUpRight className="h-4 w-4" />
+            </a>
+          ) : null}
         </div>
 
-        <div className="relative min-h-[300px] overflow-hidden rounded-[1.75rem] bg-[#e8eef2] ring-1 ring-black/[0.04] sm:min-h-[380px] lg:min-h-full">
-          <div className="malaysia-marquee flex h-full min-h-[300px] w-max gap-3 p-3 sm:min-h-[380px] lg:absolute lg:inset-0 lg:min-h-0">
+        <div className="relative min-h-[300px] overflow-hidden rounded-[1.5rem] bg-zinc-900 sm:min-h-[400px] lg:min-h-full">
+          <div className="malaysia-marquee flex h-full min-h-[300px] w-max gap-2.5 p-2.5 sm:min-h-[400px] lg:absolute lg:inset-0 lg:min-h-0">
             {loop.map((photo, i) => (
               <figure
                 key={`${photo.src}-${i}`}
-                className="relative h-full w-[72vw] shrink-0 overflow-hidden rounded-[1.25rem] sm:w-[250px] lg:w-[270px]"
+                className="relative h-full w-[70vw] shrink-0 overflow-hidden rounded-xl sm:w-[240px] lg:w-[260px]"
               >
-                <Image src={photo.src} alt={photo.label} fill sizes="270px" className="object-cover" />
-                <figcaption className="absolute bottom-3 left-3 rounded-full bg-white/90 px-3 py-1 text-[11px] font-medium text-zinc-800">
-                  {photo.label}
-                </figcaption>
+                <Image src={photo.src} alt={photo.label} fill sizes="260px" className="object-cover" />
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-3 pt-10 pb-3">
+                  <figcaption className="text-xs font-medium text-white">{photo.label}</figcaption>
+                </div>
               </figure>
             ))}
           </div>

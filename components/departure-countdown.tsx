@@ -33,18 +33,18 @@ function useCountdown(targetIso: string) {
 }
 
 const units = [
-  { key: "days" as const, label: "Days", tone: "bg-[#f4f1ea]" },
-  { key: "hours" as const, label: "Hours", tone: "bg-[#e7eee8]" },
-  { key: "minutes" as const, label: "Mins", tone: "bg-[#e8eef2]" },
-  { key: "seconds" as const, label: "Secs", tone: "bg-[#efe9e2]" },
+  { key: "days" as const, label: "Days" },
+  { key: "hours" as const, label: "Hours" },
+  { key: "minutes" as const, label: "Mins" },
+  { key: "seconds" as const, label: "Secs" },
 ]
 
 export function DepartureCountdown({
   targetIso,
-  variant = "light",
+  variant = "panel",
 }: {
   targetIso: string
-  variant?: "light" | "phone"
+  variant?: "panel" | "phone"
 }) {
   const parts = useCountdown(targetIso)
 
@@ -64,16 +64,13 @@ export function DepartureCountdown({
   }
 
   return (
-    <div className="grid grid-cols-4 gap-2">
+    <div className="grid grid-cols-4 gap-px overflow-hidden rounded-xl bg-white/10">
       {units.map((unit) => (
-        <div
-          key={unit.key}
-          className={`${unit.tone} rounded-2xl px-1.5 py-3 text-center ring-1 ring-black/[0.04] sm:px-2 sm:py-4`}
-        >
-          <p className="font-serif text-[1.55rem] leading-none text-zinc-950 tabular-nums sm:text-[1.85rem]">
+        <div key={unit.key} className="bg-zinc-900 px-2 py-3.5 text-center sm:py-4">
+          <p className="font-serif text-[1.6rem] leading-none text-white tabular-nums sm:text-[1.85rem]">
             {parts ? (unit.key === "days" ? parts.days : pad(parts[unit.key])) : "—"}
           </p>
-          <p className="mt-1.5 text-[10px] font-medium tracking-[0.12em] text-zinc-500 uppercase">{unit.label}</p>
+          <p className="mt-1.5 text-[10px] font-medium tracking-[0.14em] text-white/45 uppercase">{unit.label}</p>
         </div>
       ))}
     </div>
