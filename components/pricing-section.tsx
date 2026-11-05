@@ -6,12 +6,23 @@ import { TripCard } from "./trip-card"
 
 const trips = [
   {
+    name: "Sri Lanka",
+    location: "Negombo, Kandy, Nuwara Eliya & Colombo",
+    duration: "5 days",
+    season: "17 Dec 2026",
+    image: "/trips/srilanka/web/02.jpg",
+    type: "Next departure",
+    highlights: ["Temple of the Tooth", "Tea country", "Colombo city"],
+    includes: ["Flights", "Guide", "Hotels"],
+    comingSoon: true,
+  },
+  {
     name: "Malaysia",
     location: "Kuala Lumpur, Putrajaya & Genting",
     duration: "4 days",
     season: "18 Nov 2026",
     image: "/trips/upcoming/malaysia.jpg",
-    type: "Next departure",
+    type: "Sold out",
     highlights: ["Petronas Towers", "Street food trails", "Island evenings"],
     includes: ["Flights", "Guide", "Hotels"],
     comingSoon: true,

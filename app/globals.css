@@ -119,6 +119,7 @@ html {
   animation: phone-photo-progress 3400ms linear forwards;
 }
 
-.malaysia-marquee {
+.malaysia-marquee,
+.departure-marquee {
   animation: malaysia-slide 28s linear infinite;
 }

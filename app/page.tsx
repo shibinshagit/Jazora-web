@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { Header } from "@/components/header"
 import { HeroSection } from "@/components/hero-section"
 import { NextDepartureSection } from "@/components/next-departure-section"
+import { FilledDepartureSection } from "@/components/filled-departure-section"
 import { StatsSection } from "@/components/stats-section"
 import { DestinationsSection } from "@/components/destinations-section"
 import { ManifestoSection } from "@/components/manifesto-section"
@@ -38,6 +39,7 @@ export default function Home() {
           <Header />
           <HeroSection />
           <NextDepartureSection />
+          <FilledDepartureSection />
           <PricingSection />
           <DestinationsSection />
           <ManifestoSection />
