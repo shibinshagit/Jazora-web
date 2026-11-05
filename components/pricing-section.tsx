@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { TripCard } from "./trip-card"
+import { sriLankaBookUrl, sriLankaTrip } from "@/lib/sri-lanka-departure"
+import { malaysiaTrip } from "@/lib/malaysia-departure"
 
 const trips = [
   {
@@ -14,7 +16,9 @@ const trips = [
     type: "Next departure",
     highlights: ["Temple of the Tooth", "Tea country", "Colombo city"],
     includes: ["Flights", "Guide", "Hotels"],
-    comingSoon: true,
+    comingSoon: false,
+    seats: { booked: sriLankaTrip.booked, total: sriLankaTrip.groupSize },
+    bookUrl: sriLankaBookUrl(),
   },
   {
     name: "Malaysia",
@@ -25,7 +29,9 @@ const trips = [
     type: "Sold out",
     highlights: ["Petronas Towers", "Street food trails", "Island evenings"],
     includes: ["Flights", "Guide", "Hotels"],
-    comingSoon: true,
+    comingSoon: false,
+    soldOut: true,
+    seats: { booked: malaysiaTrip.booked, total: malaysiaTrip.groupSize },
   },
   {
     name: "Vietnam",

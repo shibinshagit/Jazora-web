@@ -17,6 +17,9 @@ export interface TripCardProps {
   includes?: string[]
   popular?: boolean
   comingSoon?: boolean
+  soldOut?: boolean
+  seats?: { booked: number; total: number }
+  bookUrl?: string
   className?: string
 }
 
@@ -30,25 +33,30 @@ export function TripCard({
   includes = [],
   popular = false,
   comingSoon = false,
+  soldOut = false,
+  seats,
+  bookUrl,
   className,
 }: TripCardProps) {
   const bookOnWhatsApp = () => {
-    if (comingSoon) return
-    const lines = [
-      "Hi Jazora — I'd like to book a trip.",
-      "",
-      `Trip: ${name}`,
-      `Location: ${location}`,
-      `Season: ${season}`,
-      `Duration: ${duration}`,
-      highlights.length ? `Highlights: ${highlights.join(", ")}` : null,
-    ].filter(Boolean)
+    if (comingSoon || soldOut) return
+    const href =
+      bookUrl ??
+      `${WHATSAPP_URL}?text=${encodeURIComponent(
+        [
+          "Hi Jazora — I'd like to book a trip.",
+          "",
+          `Trip: ${name}`,
+          `Location: ${location}`,
+          `Season: ${season}`,
+          `Duration: ${duration}`,
+          highlights.length ? `Highlights: ${highlights.join(", ")}` : null,
+        ]
+          .filter(Boolean)
+          .join("\n"),
+      )}`
 
-    window.open(
-      `${WHATSAPP_URL}?text=${encodeURIComponent(lines.join("\n"))}`,
-      "_blank",
-      "noopener,noreferrer",
-    )
+    window.open(href, "_blank", "noopener,noreferrer")
   }
 
   return (
@@ -65,7 +73,7 @@ export function TripCard({
           fill
           className={cn(
             "object-cover transition-transform duration-700",
-            comingSoon ? "grayscale-[25%]" : "group-hover:scale-[1.03]",
+            comingSoon || soldOut ? "grayscale-[25%]" : "group-hover:scale-[1.03]",
           )}
           sizes="(max-width: 768px) 85vw, 380px"
         />
@@ -77,9 +85,19 @@ export function TripCard({
               Popular
             </span>
           )}
-          {comingSoon && (
+          {soldOut && (
+            <span className="rounded-full bg-red-600 px-3 py-1 text-[11px] font-medium text-white">
+              Sold out
+            </span>
+          )}
+          {comingSoon && !soldOut && (
             <span className="rounded-full bg-white/90 px-3 py-1 text-[11px] font-medium text-zinc-800 backdrop-blur-sm">
               Coming soon
+            </span>
+          )}
+          {!comingSoon && !soldOut && (
+            <span className="rounded-full bg-white/90 px-3 py-1 text-[11px] font-medium text-zinc-800 backdrop-blur-sm">
+              Next
             </span>
           )}
           <span
@@ -101,7 +119,11 @@ export function TripCard({
             </p>
           </div>
 
-          {comingSoon ? (
+          {soldOut ? (
+            <span className="shrink-0 rounded-full bg-white/20 px-3.5 py-2 text-xs font-medium text-white backdrop-blur-sm">
+              Full
+            </span>
+          ) : comingSoon ? (
             <span className="shrink-0 rounded-full bg-white/20 px-3.5 py-2 text-xs font-medium text-white backdrop-blur-sm">
               Soon
             </span>
@@ -126,6 +148,28 @@ export function TripCard({
               {season} · {duration}
             </span>
           </div>
+          {seats ? (
+            <div className="pt-2">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-medium text-zinc-800">
+                  {seats.booked} / {seats.total} seats
+                </span>
+                <span>{soldOut ? "Full" : `${seats.total - seats.booked} left`}</span>
+              </div>
+              <div
+                className="mt-1.5 h-1 overflow-hidden rounded-full bg-zinc-200"
+                role="progressbar"
+                aria-valuenow={seats.booked}
+                aria-valuemin={0}
+                aria-valuemax={seats.total}
+              >
+                <div
+                  className={`h-full rounded-full ${soldOut ? "bg-red-600" : "bg-zinc-950"}`}
+                  style={{ width: `${(seats.booked / seats.total) * 100}%` }}
+                />
+              </div>
+            </div>
+          ) : null}
         </div>
 
         {highlights.length > 0 && (
