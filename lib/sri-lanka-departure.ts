@@ -17,7 +17,7 @@ export const sriLankaTrip = {
   from: "Dubai ⇄ Colombo",
   summary: "Five days from Dubai. Kandy, the tea hills, and Colombo with one small group.",
   groupSize: 22,
-  booked: 0,
+  booked: 10,
   price: "AED 3,499",
   priceNote: "per person",
   location: "Negombo, Kandy, Nuwara Eliya & Colombo",
